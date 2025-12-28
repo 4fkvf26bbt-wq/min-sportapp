@@ -1829,29 +1829,24 @@ function encodeSwishData(obj) {
   return btoa(unescape(encodeURIComponent(json)));
 }
 
-// Bygg en Swish-deeplink enligt Swish "data"-formatet
 function buildSwishDeepLink(amountNumber, message) {
   if (!swishConfig.alias) return null;
 
   const amount = Number(amountNumber || 0);
   if (!amount || amount <= 0) return null;
 
-  // Swish gillar maxlängd på meddelande – korta ner lite för säkerhets skull
-  const msg = (message || "").slice(0, 50);
-
   const payload = {
     version: 1,
-    payee: {
-      value: swishConfig.alias.replace(/\s+/g, "")
-    },
-    amount: {
-      value: amount.toFixed(0),
-      editable: false
-    },
-    message: {
-      value: msg,
-      editable: true
-    }
+    payee: swishConfig.alias.replace(/\s+/g, ""),
+    amount: amount.toFixed(0)
+  };
+
+  const json = JSON.stringify(payload);
+  const data = btoa(unescape(encodeURIComponent(json)));
+
+  return `swish://payment?data=${encodeURIComponent(data)}`;
+}
+
   };
 
   const data = encodeSwishData(payload);
