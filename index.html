@@ -1130,6 +1130,36 @@
     </section>
   </main>
  
+<!-- Firebase SDK – kopplar appen till Firestore -->
+<script type="module">
+  import { initializeApp } from "https://protect.checkpoint.com/v2/r02/___https://www.gstatic.com/knwjgfxjoxd66.5.6dknwjgfxj-fuu.ox&vzty___.YzJlOnB1cmF0b3NudjIzOmM6bzplMGM0MzQ5ZDM1MDU3MjgwNjg3OTk2NzcyNDM0ODRlYjo3OjZmN2I6NDcyYzZkMTU0NGQ5NDhiMjkyYWRmOTg4NTEyOTI1ODBiMjRlMzY1N2FjY2YxMThiZDllZDVmNTM2N2I5MmQwMTp0OlQ6VA;;
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    doc,
+    setDoc
+  } from "https://protect.checkpoint.com/v2/r02/___https://www.gstatic.com/knwjgfxjoxd66.5.6dknwjgfxj-knwjxytwj.ox&vzty___.YzJlOnB1cmF0b3NudjIzOmM6bzplMGM0MzQ5ZDM1MDU3MjgwNjg3OTk2NzcyNDM0ODRlYjo3OjRmZTc6Zjk2Mjc5OTdlZTI1MDJlNzZjOWExZGUzNjI5ZWZjNTJjMzdhYjAzMTEwODdlZjU4ODA0MmI1ZjQ1NDc0MGY1Nzp0OlQ6VA;;
+
+  // 🔹 Din egen config (den du redan har)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBI0gcWWudr74oM3iqn1O-jkfLZkrkwGpg",
+    authDomain: "lpbc-sportapp.firebaseapp.com",
+    projectId: "lpbc-sportapp",
+    storageBucket: "lpbc-sportapp.firebasestorage.app",
+    messagingSenderId: "478261148666",
+    appId: "1:478261148666:web:8760276de626da0c2d0243"
+  };
+
+  // Starta Firebase
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+
+  // Gör Firestore tillgängligt för resten av koden
+  window._lpbcDb = db;
+  window._lpbcFirestoreHelpers = { collection, getDocs, addDoc, doc, setDoc };
+</script>
 
 
   <script>
