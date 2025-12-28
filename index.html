@@ -1,0 +1,3219 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Min SportApp</title>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+
+    header {
+      background: #1e88e5;
+      color: white;
+      padding: 12px 16px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    h1 { margin: 0; font-size: 24px; }
+    header p { margin: 2px 0; }
+
+    .header-right p {
+      margin: 0 0 4px 0;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 24px auto;
+      background: white;
+      padding: 16px 20px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    h2 { margin-top: 0; }
+    h3 { margin-bottom: 8px; }
+
+    .team-info { margin-bottom: 12px; }
+
+    .player-list li,
+    .event-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      list-style: none;
+    }
+
+    .player-list,
+    .event-list {
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .tag-muted {
+      background: #eeeeee;
+      color: #555;
+    }
+
+    .event-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .attendance-buttons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 13px;
+      cursor: pointer;
+      background: #fafafa;
+    }
+
+    .btn-primary {
+      background: #1e88e5;
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-yes.selected { background: #2e7d32; color: white; border: none; }
+    .btn-no.selected  { background: #c62828; color: white; border: none; }
+
+    .status-text {
+      font-size: 12px;
+      color: #555;
+      margin-left: 4px;
+    }
+
+    .guest-list {
+      font-size: 12px;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    .event-description {
+      font-size: 12px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .event-summary {
+      font-size: 12px;
+      color: #333;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .section-box {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      max-width: 520px;
+      margin-bottom: 6px;
+    }
+
+    .form-grid input,
+    .form-grid select {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .full-width { grid-column: 1 / span 2; }
+
+    .hint { font-size: 12px; color: #666; }
+    .error { color: #c62828; font-size: 13px; margin-top: 4px; }
+    .empty-text { font-size: 14px; color: #777; font-style: italic; margin-top: 4px; }
+
+    .active-player {
+      margin: 12px 0 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #f3f7ff;
+      border: 1px solid #d1e2ff;
+      max-width: 460px;
+    }
+
+    .active-player label {
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .active-player select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+    }
+
+    #player-stats {
+      font-size: 12px;
+      color: #444;
+      margin: 4px 0 0;
+    }
+
+    /* LOGIN-VY */
+    #login-view {
+      max-width: 420px;
+      margin: 24px auto;
+      background: white;
+      padding: 16px 20px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    #login-view h2 {
+      margin-top: 0;
+      margin-bottom: 4px;
+    }
+
+    #login-view label {
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    #login-view input,
+    #login-view select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    #login-view button {
+      margin-top: 6px;
+    }
+
+    #app-view {
+      display: none;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 4px;
+    }
+
+    .tab-button {
+      border-radius: 4px 4px 0 0;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      background: transparent;
+      font-size: 13px;
+    }
+
+    .tab-button.active {
+      border-color: #e0e0e0 #e0e0e0 white #e0e0e0;
+      background: white;
+      font-weight: 600;
+    }
+
+    .tab-section {
+      display: none;
+      margin-top: 8px;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    /* ADMIN-DEL */
+    #admin-section {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 2px dashed #ddd;
+    }
+
+    #user-table,
+    #member-table,
+    #economy-pass-table,
+    #economy-tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    #user-table th,
+    #user-table td,
+    #member-table th,
+    #member-table td,
+    #economy-pass-table th,
+    #economy-pass-table td,
+    #economy-tx-table th,
+    #economy-tx-table td {
+      border-bottom: 1px solid #eee;
+      padding: 6px 4px;
+      text-align: left;
+    }
+
+    #user-table th,
+    #member-table th,
+    #economy-pass-table th,
+    #economy-tx-table th {
+      font-weight: 600;
+      background: #fafafa;
+    }
+
+    /* GRUPPFILTER */
+    #group-filter-box {
+      margin: 8px 0 16px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      max-width: 460px;
+    }
+
+    #group-filter-box label {
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    #group-filter {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    #receipt-result,
+    #self-receipt-result {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    #receipt-result p,
+    #self-receipt-result p {
+      margin: 2px 0;
+    }
+
+    #receipt-result ul,
+    #self-receipt-result ul {
+      margin: 4px 0 0 16px;
+      padding: 0;
+    }
+
+    /* GAME-FEED / MATCHLOGG */
+    .game-feed {
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: #fafafa;
+      border-radius: 4px;
+      border: 1px solid #eee;
+      font-size: 12px;
+    }
+
+    .game-feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .game-feed-title {
+      font-weight: 600;
+    }
+
+    .game-feed-toggle {
+      padding: 2px 8px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .game-feed-content {
+      margin-top: 6px;
+    }
+
+    .game-feed-list {
+      margin: 0;
+      padding-left: 16px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .game-feed-item {
+      margin-bottom: 2px;
+      list-style: disc;
+    }
+
+    .game-feed-meta {
+      color: #777;
+      margin-right: 4px;
+    }
+
+    .game-feed-form {
+      margin-top: 6px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .game-feed-form input {
+      flex: 1;
+      padding: 4px 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+
+    .game-feed-empty {
+      font-style: italic;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    /* SWISH / BETALNING */
+    .payment-info {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      font-size: 12px;
+    }
+
+    .payment-details {
+      margin-top: 4px;
+    }
+
+    .payment-details p {
+      margin: 2px 0;
+    }
+
+    .payment-copy-row {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .copy-btn {
+      font-size: 11px;
+      padding: 4px 6px;
+    }
+
+    .payment-toggle-btn {
+      margin-top: 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-row">
+      <div>
+        <h1>Min SportApp</h1>
+        <p>Version 19 ✨ (ordinarie/extra, terminskort och egen kvitto-vy)</p>
+      </div>
+      <div class="header-right">
+        <p id="header-role-text">Inte inloggad</p>
+        <button id="logout-btn" style="display:none;">Logga ut</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOGIN-VY -->
+  <section id="login-view">
+    <h2>Välkommen</h2>
+    <p class="hint">
+      Välj användare och skriv rätt lösenord. Admin kan skapa fler konton, sätta roller, grupper och medlemskap.
+    </p>
+
+    <form id="login-form" style="margin-top:12px;">
+      <label for="login-user-select">Välj användare:</label>
+      <select id="login-user-select"></select>
+
+      <label for="login-password" style="margin-top:8px;">Lösenord:</label>
+      <input id="login-password" type="password" placeholder="Skriv lösenordet för denna användare" />
+
+      <button type="submit" class="btn-primary" style="margin-top:10px;">Logga in</button>
+      <p class="hint" style="margin-top:4px;">
+        Demolösenord:<br>
+        Admin Anna = <strong>admin</strong>, Tränare Tomas = <strong>coach</strong>,<br>
+        Ledare Lisa = <strong>leader</strong>, Spelare Sara = <strong>spelare</strong>.
+      </p>
+      <p class="error" id="login-error" style="display:none;"></p>
+    </form>
+  </section>
+
+  <!-- APP-VY MED TABBAR -->
+  <main id="app-view">
+    <section class="team-info">
+      <h2>Vår förening</h2>
+      <p>Grupper: Barn/ungdom 1 & 2, Motionsgrupp, Tävlingsgrupp</p>
+    </section>
+
+    <div id="group-filter-box">
+      <label for="group-filter">Visa grupp:</label>
+      <select id="group-filter"></select>
+      <p class="hint">
+        Filtrerar spelare och påverkar summeringar i kalendern.
+      </p>
+    </div>
+
+    <!-- FLIKAR -->
+    <nav class="tabs">
+      <button class="tab-button active" data-tab="overview">Översikt</button>
+      <button class="tab-button" data-tab="members">Medlemsregister</button>
+      <button class="tab-button" data-tab="calendar">Kalender</button>
+      <button class="tab-button" data-tab="economy">Ekonomi</button>
+      <button class="tab-button" data-tab="news">Nyheter</button>
+      <button class="tab-button" data-tab="forum">Forum</button>
+      <button class="tab-button" data-tab="chat">Chat</button>
+    </nav>
+
+    <!-- TABB: ÖVERSIKT -->
+    <section class="tab-section active" data-tab="overview" id="tab-overview">
+      <section>
+        <h3>Spelare</h3>
+
+        <div class="active-player">
+          <p id="logged-in-as" class="hint"></p>
+
+          <div id="coach-player-select-wrapper">
+            <label for="active-player-select">Välj spelare att markera närvaro för:</label>
+            <select id="active-player-select"></select>
+            <p class="hint">Gäller roller: Admin, Tränare, Ledare.</p>
+          </div>
+
+          <p id="player-stats"></p>
+        </div>
+
+        <ul class="player-list"></ul>
+      </section>
+
+      <section id="admin-section">
+        <h3>Admin – användare, roller, grupper & medlemskap (översikt)</h3>
+        <p class="hint">
+          Endast Admin ser den här delen. Detaljerade uppgifter (e-post, telefon osv) ändras i fliken <strong>Medlemsregister</strong>.
+        </p>
+
+        <table id="user-table">
+          <thead>
+            <tr>
+              <th>Namn</th>
+              <th>Roll</th>
+              <th>Grupp</th>
+              <th>Medlemskap</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+
+        <div class="section-box">
+          <h3>Skapa ny användare</h3>
+          <form id="new-user-form" class="form-grid">
+            <div class="full-width">
+              <input id="new-user-name" type="text" placeholder="Namn" required />
+            </div>
+            <div>
+              <input id="new-user-password" type="text" placeholder="Lösenord" required />
+            </div>
+            <div>
+              <select id="new-user-role">
+                <option value="player">Spelare</option>
+                <option value="coach">Tränare</option>
+                <option value="leader">Ledare</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div>
+              <select id="new-user-group"></select>
+            </div>
+            <div>
+              <select id="new-user-membership">
+                <option value="member">Medlem</option>
+                <option value="nonmember">Tränar ej medlem</option>
+              </select>
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Skapa användare</button>
+            </div>
+          </form>
+          <p class="hint">
+            E-post, telefon, personnummer, medlemskategori och "kvitto önskas" sätter du i fliken <strong>Medlemsregister</strong>.
+          </p>
+          <p class="error" id="new-user-error" style="display:none;"></p>
+        </div>
+      </section>
+    </section>
+
+    <!-- TABB: MEDLEMSREGISTER -->
+    <section class="tab-section" data-tab="members" id="tab-members">
+      <h3>Medlemsregister</h3>
+      <p class="hint" id="member-hint-text"></p>
+
+      <table id="member-table">
+        <thead id="member-table-head"></thead>
+        <tbody id="member-table-body"></tbody>
+      </table>
+
+      <div class="section-box" id="member-edit-section">
+        <h3>Redigera medlem (Admin)</h3>
+        <form id="member-edit-form" class="form-grid">
+          <div class="full-width">
+            <label for="member-select">Välj medlem att redigera</label>
+            <select id="member-select"></select>
+          </div>
+          <div class="full-width">
+            <input id="member-email" type="email" placeholder="E-postadress" />
+          </div>
+          <div>
+            <input id="member-personal-number" type="text" placeholder="Personnummer" />
+          </div>
+          <div>
+            <input id="member-phone" type="text" placeholder="Telefonnummer" />
+          </div>
+          <div>
+            <select id="member-category"></select>
+          </div>
+          <div>
+            <select id="member-membership">
+              <option value="member">Medlem</option>
+              <option value="nonmember">Tränar ej medlem</option>
+            </select>
+          </div>
+          <div>
+            <select id="member-receipt">
+              <option value="yes">Kvitto önskas</option>
+              <option value="no">Kvitto behövs ej</option>
+            </select>
+          </div>
+          <div class="full-width">
+            <button type="submit" class="btn-primary">Spara ändringar</button>
+          </div>
+        </form>
+        <p class="error" id="member-edit-error" style="display:none;"></p>
+        <p class="hint">
+          Endast Admin kan se och ändra personnummer, telefon, e-post och kvitto-inställningar.
+        </p>
+      </div>
+    </section>
+
+    <!-- TABB: KALENDER -->
+    <section class="tab-section" data-tab="calendar" id="tab-calendar">
+      <h3>Kalender / aktiviteter</h3>
+
+      <ul class="event-list"></ul>
+
+      <p class="empty-text" id="no-events-text" style="display:none;">
+        Inga aktiviteter ännu. Lägg till en nedan 👇
+      </p>
+
+      <div class="section-box" id="manage-events-section">
+        <h3>Lägg till ny aktivitet</h3>
+
+        <form class="form-grid" id="new-event-form">
+          <div>
+            <label for="event-date" class="hint">Datum</label>
+            <input id="event-date" type="date" />
+          </div>
+          <div>
+            <label for="event-time" class="hint">Tid (t.ex. 18:00)</label>
+            <input id="event-time" type="text" placeholder="Tid (t.ex. 18:00)" required />
+          </div>
+          <div>
+            <label for="event-duration" class="hint">Längd</label>
+            <select id="event-duration">
+              <option value="2h">2 timmar</option>
+              <option value="1_5h">1,5 timmar</option>
+            </select>
+          </div>
+          <div>
+            <label for="event-courts" class="hint">Antal banor</label>
+            <input id="event-courts" type="number" min="1" step="1" value="1" />
+          </div>
+          <div>
+            <label for="event-type" class="hint">Typ av pass</label>
+            <select id="event-type">
+              <option value="ordinarie">Ordinarie</option>
+              <option value="extra">Extra träning</option>
+            </select>
+          </div>
+          <div class="full-width">
+            <input id="event-title" type="text" placeholder="Titel (t.ex. Träning)" required />
+          </div>
+          <div>
+            <input id="event-place" type="text" placeholder="Plats (Plan 1)" required />
+          </div>
+          <div>
+            <select id="event-group"></select>
+          </div>
+          <div class="full-width">
+            <input id="event-description" type="text" placeholder="Beskrivning/innehåll (valfritt)" />
+          </div>
+          <div>
+            <input id="event-price-member" type="number" min="0" step="0.5"
+                   placeholder="Pris medlem (tomt = enligt grupp + längd)" />
+          </div>
+          <div>
+            <input id="event-price-nonmember" type="number" min="0" step="0.5"
+                   placeholder="Pris ej medlem (tomt = enligt grupp + längd)" />
+          </div>
+          <div class="full-width">
+            <button type="submit" class="btn-primary">Lägg till aktivitet</button>
+          </div>
+        </form>
+
+        <p class="hint">
+          Bara rollerna Admin, Tränare, Ledare får skapa aktiviteter.
+          Ekonomi-data (pris, kostnad) används i <strong>Ekonomi-fliken</strong>, inte i kalendern.<br>
+          Kostnaden beräknas som: pris per bana & timme × antal timmar × antal banor.<br>
+          Om spelaren har terminskort och passet är <strong>Ordinarie</strong> → 0 kr i spelavgift.
+        </p>
+        <p class="error" id="event-error" style="display:none;"></p>
+      </div>
+
+      <div class="section-box" id="guest-section">
+        <h3>Bjud in gästspelare</h3>
+        <form id="guest-form" class="form-grid">
+          <div class="full-width">
+            <label for="guest-event-select">Välj aktivitet</label>
+            <select id="guest-event-select"></select>
+          </div>
+          <div class="full-width">
+            <input id="guest-name" type="text" placeholder="Gästspelarens namn" required />
+          </div>
+          <div class="full-width">
+            <button type="submit" class="btn-primary">Bjud in gästspelare</button>
+          </div>
+        </form>
+        <p class="hint">
+          Alla som är inloggade kan bjuda in gästspelare. Gäster listas under respektive aktivitet.
+        </p>
+        <p class="error" id="guest-error" style="display:none;"></p>
+      </div>
+    </section>
+
+    <!-- TABB: EKONOMI -->
+    <section class="tab-section" data-tab="economy" id="tab-economy">
+      <h3>Ekonomi</h3>
+      <p class="hint" id="economy-hint"></p>
+
+      <div id="economy-admin-view">
+        <div class="section-box">
+          <h4>Kostnadstabell 2026 (standardvärden – påverkar bara nya pass)</h4>
+          <form id="cost-table-form" class="form-grid">
+            <div>
+              <label for="cost-pass-cost" class="hint">Pris per bana & timme (t.ex. 50 kr)</label>
+              <input id="cost-pass-cost" type="number" min="0" step="1" />
+            </div>
+            <div>
+              <label class="hint">Terminskort (medlem) – standard</label>
+              <input id="cost-term-standard" type="number" min="0" step="1"
+                     placeholder="Standard (t.ex. 1000)" />
+            </div>
+            <div>
+              <label class="hint">Terminskort kampanj (första köp)</label>
+              <input id="cost-term-campaign" type="number" min="0" step="1"
+                     placeholder="Kampanj (t.ex. 900)" />
+            </div>
+
+            <div>
+              <label for="cost-fee-barn" class="hint">Medlemsavgift Barn/ungdom</label>
+              <input id="cost-fee-barn" type="number" min="0" step="1" />
+            </div>
+            <div>
+              <label for="cost-fee-vuxen" class="hint">Medlemsavgift Vuxen</label>
+              <input id="cost-fee-vuxen" type="number" min="0" step="1" />
+            </div>
+            <div class="full-width">
+              <label for="cost-fee-familj" class="hint">Medlemsavgift Familj</label>
+              <input id="cost-fee-familj" type="number" min="0" step="1" />
+            </div>
+
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Spara kostnadstabell 2026</button>
+            </div>
+          </form>
+          <p class="hint">
+            Drop-in-priser (Barn/Vuxen, 1,5/2 timmar, Medlem/Ej medlem) är inlagda enligt er prislista
+            och används automatiskt när du skapar nya pass utifrån grupp + längd.<br>
+            Ändringar här påverkar inte redan skapade pass.
+          </p>
+        </div>
+
+        <!-- SWISH-INSTÄLLNINGAR -->
+        <div class="section-box" id="swish-settings-section">
+          <h4>Swish-inställningar (privat nummer)</h4>
+          <form id="swish-settings-form" class="form-grid">
+            <div class="full-width">
+              <label for="swish-enabled" class="hint">Aktivera Swish-hjälp i appen</label>
+              <select id="swish-enabled">
+                <option value="yes">Ja</option>
+                <option value="no">Nej</option>
+              </select>
+            </div>
+            <div>
+              <label for="swish-alias" class="hint">Swish-nummer (mottagare)</label>
+              <input id="swish-alias" type="text" placeholder="t.ex. 0701234567" />
+            </div>
+            <div>
+              <label for="swish-recipient-name" class="hint">Namn som visas</label>
+              <input id="swish-recipient-name" type="text" placeholder="t.ex. Föreningens namn" />
+            </div>
+            <div class="full-width">
+              <label for="swish-message-prefix" class="hint">Standardmeddelande (prefix)</label>
+              <input id="swish-message-prefix" type="text" placeholder="t.ex. Träning" />
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Spara Swish-inställningar</button>
+            </div>
+          </form>
+          <p class="hint">
+            Detta skapar färdiga betalningsdetaljer (belopp + meddelande) för varje pass,
+            som spelaren kan kopiera in i Swish. Själva betalningen sker fortfarande till
+            ordförandens privata Swish.
+          </p>
+        </div>
+
+        <h4>Pass-intäkter (kopplat till kalendern)</h4>
+        <table id="economy-pass-table">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Titel</th>
+              <th>Grupp</th>
+              <th>Typ</th>
+              <th>Deltagare (M / Ej M)</th>
+              <th>Intäkter (kr)</th>
+              <th>Kostnad (kr)</th>
+              <th>Resultat (kr)</th>
+            </tr>
+          </thead>
+          <tbody id="economy-pass-tbody"></tbody>
+        </table>
+        <p class="hint" id="economy-pass-summary"></p>
+
+        <div class="section-box">
+          <h4>Övriga transaktioner</h4>
+          <table id="economy-tx-table">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Typ</th>
+                <th>Kategori</th>
+                <th>Beskrivning</th>
+                <th>Belopp (kr)</th>
+              </tr>
+            </thead>
+            <tbody id="economy-tx-tbody"></tbody>
+          </table>
+
+          <form id="economy-tx-form" class="form-grid">
+            <div>
+              <label for="tx-date" class="hint">Datum</label>
+              <input id="tx-date" type="date" />
+            </div>
+            <div>
+              <label for="tx-type" class="hint">Typ</label>
+              <select id="tx-type">
+                <option value="income">Inkomst</option>
+                <option value="expense">Kostnad</option>
+              </select>
+            </div>
+            <div>
+              <input id="tx-category" type="text" placeholder="Kategori (t.ex. Hallhyra, Bidrag)" />
+            </div>
+            <div>
+              <input id="tx-amount" type="number" step="1" min="0" placeholder="Belopp (kr)" />
+            </div>
+            <div class="full-width">
+              <input id="tx-description" type="text" placeholder="Beskrivning" />
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Lägg till transaktion</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="section-box">
+          <h4>Medlemsbetalningar (registrera betalning)</h4>
+          <form id="membership-payment-form" class="form-grid">
+            <div class="full-width">
+              <label for="mp-member-select" class="hint">Välj medlem</label>
+              <select id="mp-member-select"></select>
+            </div>
+            <div>
+              <label for="mp-type" class="hint">Typ</label>
+              <select id="mp-type">
+                <option value="membership2026">Medlemsavgift 2026</option>
+                <option value="term-VT-2026">Terminskort VT 2026</option>
+                <option value="term-HT-2026">Terminskort HT 2026</option>
+              </select>
+            </div>
+            <div>
+              <label for="mp-amount" class="hint">Belopp (kr)</label>
+              <input id="mp-amount" type="number" min="0" step="1" />
+            </div>
+            <div>
+              <label for="mp-date" class="hint">Betald datum</label>
+              <input id="mp-date" type="date" />
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Registrera betalning</button>
+            </div>
+          </form>
+          <p class="hint">
+            Belopp föreslås automatiskt utifrån kostnadstabellen (Barn/Vuxen/Familj och terminskort),
+            men kan ändras vid behov. Registreringen hamnar både på medlemmen och i transaktionslistan.
+          </p>
+        </div>
+
+        <div class="section-box">
+          <h4>Kvitto-underlag per medlem (Admin)</h4>
+          <form id="receipt-form" class="form-grid">
+            <div class="full-width">
+              <label for="receipt-member-select" class="hint">Välj medlem</label>
+              <select id="receipt-member-select"></select>
+            </div>
+            <div>
+              <label for="receipt-from" class="hint">Från datum</label>
+              <input id="receipt-from" type="date" />
+            </div>
+            <div>
+              <label for="receipt-to" class="hint">Till datum</label>
+              <input id="receipt-to" type="date" />
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Beräkna kvitto</button>
+            </div>
+          </form>
+          <div id="receipt-result" class="hint"></div>
+          <p class="hint">
+            Detta är ett underlag du kan använda för kvitto: antal pass, spelavgifter (inkl. terminskort-logik),
+            medlemsavgift, terminskort, totalsumma.
+          </p>
+        </div>
+
+        <div class="section-box">
+          <h4>Sammanfattning / kassa</h4>
+          <p id="economy-total-text"></p>
+        </div>
+      </div>
+
+      <div id="economy-public-view">
+        <h4>Föreningens kassa (förenklad vy)</h4>
+        <p id="economy-public-balance"></p>
+        <p class="hint">Detaljerad bokföring visas endast för admin.</p>
+
+        <div class="section-box">
+          <h4>Mitt kvitto (för inloggad användare)</h4>
+          <form id="self-receipt-form" class="form-grid">
+            <div>
+              <label for="self-receipt-from" class="hint">Från datum</label>
+              <input id="self-receipt-from" type="date" />
+            </div>
+            <div>
+              <label for="self-receipt-to" class="hint">Till datum</label>
+              <input id="self-receipt-to" type="date" />
+            </div>
+            <div class="full-width">
+              <button type="submit" class="btn-primary">Beräkna mitt kvitto</button>
+            </div>
+          </form>
+          <div id="self-receipt-result" class="hint"></div>
+          <p class="hint">
+            Du får ett kvitto-underlag för dig själv med antal pass, spelavgifter, medlemsavgift och terminskort.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABB: NYHETER -->
+    <section class="tab-section" data-tab="news" id="tab-news">
+      <h3>Nyheter</h3>
+      <p class="hint">Här kan man i framtiden lägga klubbnyheter, matchreferat, info från ledare osv.</p>
+    </section>
+
+    <!-- TABB: FORUM -->
+    <section class="tab-section" data-tab="forum" id="tab-forum">
+      <h3>Forum</h3>
+      <p class="hint">T.ex. samåkning, lagkassa, föreningsinfo osv.</p>
+    </section>
+
+    <!-- TABB: CHAT -->
+    <section class="tab-section" data-tab="chat" id="tab-chat">
+      <h3>Chat</h3>
+      <p class="hint">En enkel föreningschat kan vi bygga här senare.</p>
+    </section>
+  </main>
+
+  <script>
+    // ---- KONSTANTER: ROLLER, GRUPPER, MEDLEMSKAP ----
+    const ROLES = [
+      { value: "admin",  label: "Admin" },
+      { value: "coach",  label: "Tränare" },
+      { value: "leader", label: "Ledare" },
+      { value: "player", label: "Spelare" }
+    ];
+
+    const GROUPS = [
+      { value: "barn1",   label: "Barn/ungdom grupp 1" },
+      { value: "barn2",   label: "Barn/ungdom grupp 2" },
+      { value: "motion",  label: "Motionsgrupp" },
+      { value: "tavling", label: "Tävlingsgrupp" }
+    ];
+
+    // Vilken ålderskategori varje grupp tillhör (för prissättning)
+    const GROUP_AGE = {
+      barn1: "barn",
+      barn2: "barn",
+      motion: "vuxen",
+      tavling: "vuxen"
+    };
+
+    const MEMBERSHIP = [
+      { value: "member",    label: "Medlem" },
+      { value: "nonmember", label: "Tränar ej medlem" }
+    ];
+
+    const MEMBER_CATEGORIES = [
+      { value: "",       label: "Ingen kategori vald" },
+      { value: "barn",   label: "Barn/ungdom" },
+      { value: "vuxen",  label: "Vuxen" },
+      { value: "familj", label: "Familj" }
+    ];
+
+    function roleLabel(value) {
+      const r = ROLES.find(r => r.value === value);
+      return r ? r.label : value;
+    }
+
+    function groupLabel(value) {
+      const g = GROUPS.find(g => g.value === value);
+      return g ? g.label : "Ingen grupp";
+    }
+
+    function groupLabelForEvent(value) {
+      if (!value || value === "all") return "Alla grupper";
+      return groupLabel(value);
+    }
+
+    function membershipLabel(value) {
+      const m = MEMBERSHIP.find(m => m.value === value);
+      return m ? m.label : value;
+    }
+
+    function categoryLabel(value) {
+      const c = MEMBER_CATEGORIES.find(c => c.value === value);
+      return c ? c.label : "";
+    }
+
+    // ---- KOSTNADSTABELL 2026 ----
+    const costTable = {
+      courtHourlyCost: 50, // pris per bana & timme
+      membershipFees: {
+        barn: 150,
+        vuxen: 300,
+        familj: 500
+      },
+      termCard: {
+        standard: 1000,
+        campaignFirst: 900,
+        dueDate: "2026-01-31"
+      },
+      membershipDueDate: "2026-01-31",
+      dropIn: {
+        member: {
+          barn:  { "2h": 30,  "1_5h": 22.5 },
+          vuxen: { "2h": 40,  "1_5h": 30   }
+        },
+        nonmember: {
+          barn:  { "2h": 30,  "1_5h": 22.5 },
+          vuxen: { "2h": 80,  "1_5h": 60   }
+        }
+      }
+    };
+
+    // ---- SWISH-KONFIG (PRIVAT NUMMER) ----
+    const swishConfig = {
+      enabled: true,                     // kan stängas av av admin
+      alias: "0700000000",               // BYT till ordförandens Swish-nummer
+      recipientName: "Vår förening",     // visas i appen
+      messagePrefix: "Träning"           // blir början på Swish-meddelandet
+    };
+
+    // ---- DATA ----
+    let nextUserId = 1;
+    let nextEventId = 1;
+    let nextTxId = 1;
+
+    const users = [
+      {
+        id: nextUserId++,
+        name: "Admin Anna",
+        role: "admin",
+        password: "admin",
+        group: "barn1",
+        membership: "member",
+        email: "anna@example.com",
+        phone: "070-100 00 01",
+        personalNumber: "19750101-1234",
+        membershipCategory: "vuxen",
+        receiptWanted: true,
+        membershipPaidYear: null,
+        membershipPaidAmount: 0,
+        membershipPaidDate: "",
+        termCards: []
+      },
+      {
+        id: nextUserId++,
+        name: "Tränare Tomas",
+        role: "coach",
+        password: "coach",
+        group: "barn1",
+        membership: "member",
+        email: "tomas@example.com",
+        phone: "070-100 00 02",
+        personalNumber: "19800303-2345",
+        membershipCategory: "vuxen",
+        receiptWanted: true,
+        membershipPaidYear: null,
+        membershipPaidAmount: 0,
+        membershipPaidDate: "",
+        termCards: []
+      },
+      {
+        id: nextUserId++,
+        name: "Ledare Lisa",
+        role: "leader",
+        password: "leader",
+        group: "motion",
+        membership: "member",
+        email: "lisa@example.com",
+        phone: "070-100 00 03",
+        personalNumber: "19851212-3456",
+        membershipCategory: "vuxen",
+        receiptWanted: false,
+        membershipPaidYear: null,
+        membershipPaidAmount: 0,
+        membershipPaidDate: "",
+        termCards: []
+      },
+      {
+        id: nextUserId++,
+        name: "Spelare Sara",
+        role: "player",
+        password: "spelare",
+        group: "barn1",
+        membership: "member",
+        email: "sara@example.com",
+        phone: "070-100 00 04",
+        personalNumber: "20100101-4567",
+        membershipCategory: "barn",
+        receiptWanted: true,
+        membershipPaidYear: null,
+        membershipPaidAmount: 0,
+        membershipPaidDate: "",
+        termCards: []
+      }
+    ];
+
+    // Exempelpass
+    const events = [
+      {
+        id: nextEventId++,
+        title: "Träning Barn Ordinarie 2h",
+        date: "2026-01-10",
+        time: "18:00",
+        duration: "2h",
+        courts: 1,
+        type: "ordinarie",
+        place: "Plan 1",
+        group: "barn1",
+        description: "Uppvärmning, passningsövningar, smålagsspel.",
+        priceMember: 30,
+        priceNonMember: 30,
+        cost: costTable.courtHourlyCost * 2 * 1,
+        attendance: {},
+        guests: [],
+        feed: [] // game-feed per aktivitet
+      },
+      {
+        id: nextEventId++,
+        title: "Motionspass Vuxna Extra 1,5h",
+        date: "2026-01-12",
+        time: "19:00",
+        duration: "1_5h",
+        courts: 1,
+        type: "extra",
+        place: "Hall A",
+        group: "motion",
+        description: "Gemensam uppvärmning, löpning, styrka.",
+        priceMember: 30,
+        priceNonMember: 60,
+        cost: costTable.courtHourlyCost * 1.5 * 1,
+        attendance: {},
+        guests: [],
+        feed: [] // game-feed per aktivitet
+      }
+    ];
+
+    // Övriga transaktioner (demo)
+    const transactions = [
+      {
+        id: nextTxId++,
+        date: "2026-01-01",
+        type: "income",
+        category: "Bidrag",
+        description: "Kommunbidrag",
+        amount: 5000
+      },
+      {
+        id: nextTxId++,
+        date: "2026-01-05",
+        type: "expense",
+        category: "Hallhyra",
+        description: "Hyra januari",
+        amount: 2000
+      }
+    ];
+
+    let currentUser = null;
+    let selectedPlayerId = null;
+    let groupFilterValue = "all";
+
+    function getPlayers() {
+      return users.filter(u => u.role === "player");
+    }
+
+    function getUserById(id) {
+      return users.find(u => u.id === id) || null;
+    }
+
+    function currentRole() {
+      return currentUser ? currentUser.role : null;
+    }
+
+    function userCanManageEvents() {
+      const r = currentRole();
+      return r === "admin" || r === "coach" || r === "leader";
+    }
+
+    function userIsAdmin() {
+      return currentRole() === "admin";
+    }
+
+    function getCurrentPlayerIdForAttendance() {
+      if (!currentUser) return null;
+      if (currentUser.role === "player") return currentUser.id;
+      return selectedPlayerId;
+    }
+
+    function findEventById(id) {
+      return events.find(e => e.id === id) || null;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "-";
+      try {
+        const [y, m, d] = dateStr.split("-");
+        return `${d}/${m}-${y}`;
+      } catch {
+        return dateStr;
+      }
+    }
+
+    // Vilken termin täcker ett visst datum (för 2026)
+    function termForDate(dateStr) {
+      if (!dateStr) return null;
+      const [y, m, d] = dateStr.split("-");
+      const year = Number(y);
+      const month = Number(m);
+      if (year !== 2026) return null;
+      if (month >= 1 && month <= 6) return "VT 2026";
+      if (month >= 7 && month <= 12) return "HT 2026";
+      return null;
+    }
+
+    function userHasTermCardForEvent(user, ev) {
+      if (!user || !ev.date) return false;
+      if (!user.termCards || user.termCards.length === 0) return false;
+      const term = termForDate(ev.date);
+      if (!term) return false;
+      return user.termCards.some(tc => tc.term === term);
+    }
+
+    // Vem får markera betald/inte betald för en spelare?
+    function canCurrentUserSetPaymentForPlayer(playerUser) {
+      if (!currentUser || !playerUser) return false;
+      if (currentUser.role === "admin" || currentUser.role === "coach" || currentUser.role === "leader") {
+        return true;
+      }
+      // spelaren själv får också markera sin betalning
+      return currentUser.id === playerUser.id;
+    }
+
+    // ---- DOM-ELEMENT ----
+    const headerRoleText = document.getElementById("header-role-text");
+    const logoutBtn = document.getElementById("logout-btn");
+    const loginView = document.getElementById("login-view");
+    const appView = document.getElementById("app-view");
+
+    const loginForm = document.getElementById("login-form");
+    const loginUserSelect = document.getElementById("login-user-select");
+    const loginPasswordInput = document.getElementById("login-password");
+    const loginError = document.getElementById("login-error");
+
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabSections = document.querySelectorAll(".tab-section");
+
+    const groupFilterSelect = document.getElementById("group-filter");
+
+    const playerList = document.querySelector(".player-list");
+    const loggedInAsText = document.getElementById("logged-in-as");
+    const coachPlayerSelectWrapper = document.getElementById("coach-player-select-wrapper");
+    const activePlayerSelect = document.getElementById("active-player-select");
+    const playerStats = document.getElementById("player-stats");
+
+    const eventList = document.querySelector(".event-list");
+    const noEventsText = document.getElementById("no-events-text");
+    const manageEventsSection = document.getElementById("manage-events-section");
+    const eventForm = document.getElementById("new-event-form");
+    const dateInput = document.getElementById("event-date");
+    const timeInput = document.getElementById("event-time");
+    const durationSelect = document.getElementById("event-duration");
+    const courtsInput = document.getElementById("event-courts");
+    const eventTypeSelect = document.getElementById("event-type");
+    const titleInput = document.getElementById("event-title");
+    const placeInput = document.getElementById("event-place");
+    const descInput = document.getElementById("event-description");
+    const eventGroupSelect = document.getElementById("event-group");
+    const priceMemberInput = document.getElementById("event-price-member");
+    const priceNonMemberInput = document.getElementById("event-price-nonmember");
+    const eventError = document.getElementById("event-error");
+
+    const guestForm = document.getElementById("guest-form");
+    const guestEventSelect = document.getElementById("guest-event-select");
+    const guestNameInput = document.getElementById("guest-name");
+    const guestError = document.getElementById("guest-error");
+
+    const adminSection = document.getElementById("admin-section");
+    const userTableBody = document.getElementById("user-table-body");
+    const newUserForm = document.getElementById("new-user-form");
+    const newUserNameInput = document.getElementById("new-user-name");
+    const newUserPasswordInput = document.getElementById("new-user-password");
+    const newUserRoleSelect = document.getElementById("new-user-role");
+    const newUserGroupSelect = document.getElementById("new-user-group");
+    const newUserMembershipSelect = document.getElementById("new-user-membership");
+    const newUserError = document.getElementById("new-user-error");
+
+    const memberHintText = document.getElementById("member-hint-text");
+    const memberTableHead = document.getElementById("member-table-head");
+    const memberTableBody = document.getElementById("member-table-body");
+    const memberEditSection = document.getElementById("member-edit-section");
+    const memberEditForm = document.getElementById("member-edit-form");
+    const memberSelect = document.getElementById("member-select");
+    const memberEmailInput = document.getElementById("member-email");
+    const memberPersonalNumberInput = document.getElementById("member-personal-number");
+    const memberPhoneInput = document.getElementById("member-phone");
+    const memberCategorySelect = document.getElementById("member-category");
+    const memberMembershipSelect = document.getElementById("member-membership");
+    const memberReceiptSelect = document.getElementById("member-receipt");
+    const memberEditError = document.getElementById("member-edit-error");
+
+    const economyHint = document.getElementById("economy-hint");
+    const economyAdminView = document.getElementById("economy-admin-view");
+    const economyPublicView = document.getElementById("economy-public-view");
+    const economyPassTbody = document.getElementById("economy-pass-tbody");
+    const economyPassSummary = document.getElementById("economy-pass-summary");
+    const economyTxTbody = document.getElementById("economy-tx-tbody");
+    const economyTotalText = document.getElementById("economy-total-text");
+    const economyPublicBalance = document.getElementById("economy-public-balance");
+
+    const economyTxForm = document.getElementById("economy-tx-form");
+    const txDateInput = document.getElementById("tx-date");
+    const txTypeSelect = document.getElementById("tx-type");
+    const txCategoryInput = document.getElementById("tx-category");
+    const txAmountInput = document.getElementById("tx-amount");
+    const txDescriptionInput = document.getElementById("tx-description");
+
+    const costTableForm = document.getElementById("cost-table-form");
+    const costPassCostInput = document.getElementById("cost-pass-cost");
+    const costFeeBarnInput = document.getElementById("cost-fee-barn");
+    const costFeeVuxenInput = document.getElementById("cost-fee-vuxen");
+    const costFeeFamiljInput = document.getElementById("cost-fee-familj");
+    const costTermStandardInput = document.getElementById("cost-term-standard");
+    const costTermCampaignInput = document.getElementById("cost-term-campaign");
+
+    const membershipPaymentForm = document.getElementById("membership-payment-form");
+    const mpMemberSelect = document.getElementById("mp-member-select");
+    const mpTypeSelect = document.getElementById("mp-type");
+    const mpAmountInput = document.getElementById("mp-amount");
+    const mpDateInput = document.getElementById("mp-date");
+
+    const receiptForm = document.getElementById("receipt-form");
+    const receiptMemberSelect = document.getElementById("receipt-member-select");
+    const receiptFromInput = document.getElementById("receipt-from");
+    const receiptToInput = document.getElementById("receipt-to");
+    const receiptResult = document.getElementById("receipt-result");
+
+    const selfReceiptForm = document.getElementById("self-receipt-form");
+    const selfReceiptFromInput = document.getElementById("self-receipt-from");
+    const selfReceiptToInput = document.getElementById("self-receipt-to");
+    const selfReceiptResult = document.getElementById("self-receipt-result");
+
+    // Swish-inställningar DOM
+    const swishSettingsForm = document.getElementById("swish-settings-form");
+    const swishEnabledSelect = document.getElementById("swish-enabled");
+    const swishAliasInput = document.getElementById("swish-alias");
+    const swishRecipientNameInput = document.getElementById("swish-recipient-name");
+    const swishMessagePrefixInput = document.getElementById("swish-message-prefix");
+
+    // ---- TABS ----
+    function setActiveTab(tabName) {
+      tabButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+      tabSections.forEach(sec => {
+        sec.classList.toggle("active", sec.dataset.tab === tabName);
+      });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        setActiveTab(btn.dataset.tab);
+      });
+    });
+
+    // ---- GRUPPFILTER ----
+    function renderGroupFilterSelect(selectElement, includeAllOption = true) {
+      selectElement.innerHTML = "";
+      if (includeAllOption) {
+        const optAll = document.createElement("option");
+        optAll.value = "all";
+        optAll.textContent = "Alla grupper";
+        selectElement.appendChild(optAll);
+      }
+      GROUPS.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.value;
+        opt.textContent = g.label;
+        selectElement.appendChild(opt);
+      });
+    }
+
+    function initGroupFilter() {
+      renderGroupFilterSelect(groupFilterSelect, true);
+      groupFilterSelect.value = "all";
+      groupFilterSelect.addEventListener("change", () => {
+        groupFilterValue = groupFilterSelect.value;
+        renderPlayers();
+        renderEvents();
+        updatePlayerStats();
+        renderEconomy();
+      });
+    }
+
+    // ---- LOGIN-VAL ----
+    function renderLoginUsers() {
+      loginUserSelect.innerHTML = "";
+      users.forEach(u => {
+        const option = document.createElement("option");
+        option.value = String(u.id);
+        const parts = [];
+        parts.push(u.name);
+        parts.push(roleLabel(u.role));
+        parts.push(groupLabel(u.group));
+        parts.push(membershipLabel(u.membership));
+        option.textContent = parts.join(" – ");
+        loginUserSelect.appendChild(option);
+      });
+    }
+
+    // ---- STATISTIK ----
+    function updatePlayerStats() {
+      const playerId = getCurrentPlayerIdForAttendance();
+      const user = playerId ? getUserById(playerId) : null;
+
+      if (!user || user.role !== "player") {
+        playerStats.textContent = "";
+        return;
+      }
+
+      let yesCount = 0;
+      let noCount = 0;
+      let totalWithResponse = 0;
+
+      events.forEach(ev => {
+        const entry = ev.attendance[playerId];
+        const status = entry?.status;
+        if (status === "yes") {
+          yesCount++;
+          totalWithResponse++;
+        } else if (status === "no") {
+          noCount++;
+          totalWithResponse++;
+        }
+      });
+
+      let text = `${user.name}: ${yesCount} gånger "Kommer", ${noCount} gånger "Kommer inte".`;
+      if (events.length === 0) {
+        text += " Inga aktiviteter skapade ännu.";
+      } else if (totalWithResponse === 0) {
+        text += " Ingen närvaro markerad ännu.";
+      }
+      playerStats.textContent = text;
+    }
+
+    // ---- ROLL-VY ----
+    function updateRoleView() {
+      if (!currentUser) {
+        headerRoleText.textContent = "Inte inloggad";
+        logoutBtn.style.display = "none";
+        return;
+      }
+
+      const label = roleLabel(currentUser.role);
+      headerRoleText.textContent = `Inloggad som: ${currentUser.name} (${label})`;
+      logoutBtn.style.display = "inline-block";
+
+      if (currentUser.role === "player") {
+        loggedInAsText.textContent =
+          `Spelare: ${currentUser.name} – du markerar bara din egen närvaro.`;
+        coachPlayerSelectWrapper.style.display = "none";
+      } else {
+        loggedInAsText.textContent =
+          `${roleLabel(currentUser.role)}: ${currentUser.name} – välj vilken spelare du markerar närvaro för.`;
+        coachPlayerSelectWrapper.style.display = "block";
+      }
+
+      manageEventsSection.style.display = userCanManageEvents() ? "block" : "none";
+      adminSection.style.display = userIsAdmin() ? "block" : "none";
+      memberEditSection.style.display = userIsAdmin() ? "block" : "none";
+
+      if (userIsAdmin()) {
+        memberHintText.textContent =
+          "Du är inloggad som Admin. Du ser hela medlemsregistret inklusive kontaktuppgifter och kan ändra uppgifter nedan.";
+      } else {
+        memberHintText.textContent =
+          "Av säkerhetsskäl ser du här bara namn, grupp och roll. Endast admin ser fullständiga medlemsuppgifter.";
+      }
+
+      if (userIsAdmin()) {
+        economyHint.textContent =
+          "Du är inloggad som Admin. Du ser kostnadstabell, pass-intäkter, medlemsbetalningar, kvitto-underlag, övriga transaktioner och total kassa.";
+        economyAdminView.style.display = "block";
+        economyPublicView.style.display = "none";
+      } else {
+        economyHint.textContent =
+          "Här visas en förenklad bild av föreningens kassa plus 'Mitt kvitto' för dig själv. Detaljer ser bara admin.";
+        economyAdminView.style.display = "none";
+        economyPublicView.style.display = "block";
+      }
+
+      renderMemberTable();
+      renderEconomy();
+      updatePlayerStats();
+    }
+
+    // ---- SPELARE-LISTA ----
+    function renderPlayers() {
+      const allPlayers = getPlayers();
+      const filteredPlayers = allPlayers.filter(p =>
+        groupFilterValue === "all" || p.group === groupFilterValue
+      );
+
+      playerList.innerHTML = "";
+      filteredPlayers.forEach(p => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${p.name}
+          <span class="tag">${groupLabel(p.group)}</span>
+          <span class="tag tag-muted">${membershipLabel(p.membership)}</span>
+        `;
+        playerList.appendChild(li);
+      });
+
+      activePlayerSelect.innerHTML = "";
+      let anySelected = false;
+      filteredPlayers.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = String(p.id);
+        opt.textContent = p.name;
+        if (p.id === selectedPlayerId) {
+          opt.selected = true;
+          anySelected = true;
+        }
+        activePlayerSelect.appendChild(opt);
+      });
+
+      if (!anySelected && filteredPlayers.length > 0) {
+        selectedPlayerId = filteredPlayers[0].id;
+        activePlayerSelect.value = String(selectedPlayerId);
+      } else if (filteredPlayers.length === 0) {
+        selectedPlayerId = null;
+      }
+
+      updateRoleView();
+    }
+
+    // ---- EVENT-SUMMERING ----
+    function getPlayersForEventSummary(ev) {
+      const allPlayers = getPlayers();
+      return allPlayers.filter(p => {
+        if (groupFilterValue !== "all" && p.group !== groupFilterValue) return false;
+        if (ev.group && ev.group !== "all" && p.group !== ev.group) return false;
+        return true;
+      });
+    }
+
+    function buildEventSummaryText(ev) {
+      const playersForSummary = getPlayersForEventSummary(ev);
+      const totalPlayers = playersForSummary.length;
+      let yesCount = 0;
+      let noCount = 0;
+
+      playersForSummary.forEach(p => {
+        const entry = ev.attendance[p.id];
+        const status = entry?.status;
+        if (status === "yes") yesCount++;
+        else if (status === "no") noCount++;
+      });
+
+      const unknown = totalPlayers - yesCount - noCount;
+      if (totalPlayers === 0) {
+        return "Ingen spelare i denna grupp (enligt nuvarande filter).";
+      }
+
+      return `Svar (denna grupp): ${yesCount} kommer, ${noCount} kommer inte, ${unknown} ej svarat (av ${totalPlayers} spelare)`;
+    }
+
+    // ---- EKONOMI PER EVENT ----
+    function calculateEventEconomy(ev) {
+      let membersCount = 0;
+      let nonMembersCount = 0;
+      let revenue = 0;
+
+      const pm = Number(ev.priceMember) || 0;
+      const pn = Number(ev.priceNonMember) || 0;
+
+      for (const key in ev.attendance) {
+        const entry = ev.attendance[key];
+        if (!entry || entry.status !== "yes") continue;
+        const userId = Number(key);
+        const u = getUserById(userId);
+        if (!u) continue;
+
+        let thisPrice = 0;
+        if (u.membership === "member") {
+          membersCount++;
+          if (ev.type === "ordinarie" && userHasTermCardForEvent(u, ev)) {
+            thisPrice = 0; // täcks av terminskort
+          } else {
+            thisPrice = pm;
+          }
+        } else {
+          nonMembersCount++;
+          thisPrice = pn;
+        }
+        revenue += thisPrice;
+      }
+
+      const cost = Number(ev.cost) || 0;
+      const result = revenue - cost;
+      return { membersCount, nonMembersCount, revenue, cost, result };
+    }
+
+    // Pris per spelare för ett visst pass (inkl. terminskort-logik)
+    function computePriceForUserAndEvent(user, ev) {
+      if (!user || !ev) return 0;
+      const pm = Number(ev.priceMember) || 0;
+      const pn = Number(ev.priceNonMember) || 0;
+
+      if (user.membership === "member") {
+        if (ev.type === "ordinarie" && userHasTermCardForEvent(user, ev)) {
+          return 0;
+        }
+        return pm;
+      } else {
+        return pn;
+      }
+    }
+// Bygg en Swish-deeplink för ett betalningsflöde
+// OBS: vissa banker/installationer kan kräva ett annat format (data=...),
+// men denna variant funkar i många fall för mobil med Swish installerat.
+function buildSwishDeepLink(amountNumber, message) {
+  if (!swishConfig.alias) return null;
+
+  const amount = Number(amountNumber || 0);
+  if (!amount || amount <= 0) return null;
+
+  const payee    = encodeURIComponent(swishConfig.alias.replace(/\s+/g, ""));
+  const amountStr = encodeURIComponent(amount.toFixed(0));
+  const msg      = encodeURIComponent(message || "");
+
+  // Enkel variant: swish://payment?version=1&payee=...&amount=...&message=...
+  return `swish://payment?version=1&payee=${payee}&amount=${amountStr}&message=${msg}`;
+}
+function isMobileWeb() {
+  const ua = (navigator.userAgent || navigator.vendor || window.opera || "").toLowerCase();
+  return ua.includes("android") ||
+         ua.includes("iphone") ||
+         ua.includes("ipad") ||
+         ua.includes("ipod") ||
+         ua.includes("iemobile") ||
+         ua.includes("windows phone");
+}
+
+
+  // ---- EVENTRAD ----
+function createEventRow(ev) {
+  const li = document.createElement("li");
+  const row = document.createElement("div");
+  row.className = "event-row";
+
+  const info = document.createElement("div");
+  const dateText = ev.date ? formatDate(ev.date) : "-";
+  const durationText = ev.duration === "1_5h" ? "1,5 h" : "2 h";
+  const courtsText = ev.courts ? `${ev.courts} bana/banor` : "";
+  const typeText = ev.type === "extra" ? "Extra träning" : "Ordinarie";
+
+  info.innerHTML = `
+    ${dateText} ${ev.time} – ${ev.title}
+    <span class="tag">${ev.place}</span>
+    <span class="tag tag-muted">${groupLabelForEvent(ev.group)}</span>
+    <span class="tag tag-muted">${durationText}</span>
+    <span class="tag tag-muted">${courtsText}</span>
+    <span class="tag">${typeText}</span>
+  `;
+
+  if (ev.description && ev.description.trim() !== "") {
+    const descDiv = document.createElement("div");
+    descDiv.className = "event-description";
+    descDiv.textContent = ev.description;
+    info.appendChild(descDiv);
+  }
+
+  if (ev.guests && ev.guests.length > 0) {
+    const guestDiv = document.createElement("div");
+    guestDiv.className = "guest-list";
+    guestDiv.textContent = "Gästspelare: " + ev.guests.join(", ");
+    info.appendChild(guestDiv);
+  }
+
+  const summaryDiv = document.createElement("div");
+  summaryDiv.className = "event-summary";
+  summaryDiv.textContent = buildEventSummaryText(ev);
+  info.appendChild(summaryDiv);
+
+  // --- GAME-FEED / MATCHLOGG ---
+  if (!ev.feed) ev.feed = [];
+
+  const feedWrapper = document.createElement("div");
+  feedWrapper.className = "game-feed";
+
+  const feedHeader = document.createElement("div");
+  feedHeader.className = "game-feed-header";
+
+  const feedTitle = document.createElement("span");
+  feedTitle.className = "game-feed-title";
+  feedTitle.textContent = "Game-feed / matchlogg";
+
+  const feedToggleBtn = document.createElement("button");
+  feedToggleBtn.type = "button";
+  feedToggleBtn.className = "game-feed-toggle";
+  feedToggleBtn.textContent = "Visa";
+
+  feedHeader.appendChild(feedTitle);
+  feedHeader.appendChild(feedToggleBtn);
+  feedWrapper.appendChild(feedHeader);
+
+  const feedContent = document.createElement("div");
+  feedContent.className = "game-feed-content";
+  feedContent.style.display = "none";
+
+  const feedList = document.createElement("ul");
+  feedList.className = "game-feed-list";
+
+  const feedEmptyText = document.createElement("div");
+  feedEmptyText.className = "game-feed-empty";
+  feedEmptyText.textContent = "Inga händelser loggade ännu.";
+
+  const canWriteFeed = !!currentUser &&
+    (currentUser.role === "admin" ||
+     currentUser.role === "coach" ||
+     currentUser.role === "leader");
+
+  const feedForm = document.createElement("form");
+  feedForm.className = "game-feed-form";
+
+  const feedInput = document.createElement("input");
+  feedInput.type = "text";
+  feedInput.placeholder = canWriteFeed
+    ? "Ex: 12’ Mål av Sara (2–1)"
+    : "Endast ledare/tränare/admin kan skriva i loggen.";
+  feedInput.disabled = !canWriteFeed;
+
+  const feedButton = document.createElement("button");
+  feedButton.type = "submit";
+  feedButton.textContent = "Lägg till";
+  feedButton.className = "btn-primary";
+  if (!canWriteFeed) {
+    feedButton.disabled = true;
+  }
+
+  feedForm.appendChild(feedInput);
+  feedForm.appendChild(feedButton);
+
+  function renderFeed() {
+    feedList.innerHTML = "";
+    if (!ev.feed || ev.feed.length === 0) {
+      feedEmptyText.style.display = "block";
+    } else {
+      feedEmptyText.style.display = "none";
+      const sortedFeed = [...ev.feed].sort((a, b) =>
+        (a.createdAt || "").localeCompare(b.createdAt || "")
+      );
+      sortedFeed.forEach(item => {
+        const liItem = document.createElement("li");
+        liItem.className = "game-feed-item";
+
+        let metaText = "";
+        if (item.createdAt) {
+          const d = new Date(item.createdAt);
+          metaText += d.toLocaleTimeString("sv-SE", {
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        }
+        if (item.authorName) {
+          metaText += metaText ? " – " + item.authorName : item.authorName;
+        }
+
+        const metaSpan = document.createElement("span");
+        metaSpan.className = "game-feed-meta";
+        metaSpan.textContent = metaText ? `[${metaText}]` : "";
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = item.text || "";
+
+        liItem.appendChild(metaSpan);
+        liItem.appendChild(textSpan);
+        feedList.appendChild(liItem);
+      });
+    }
+  }
+
+  renderFeed();
+
+  feedContent.appendChild(feedList);
+  feedContent.appendChild(feedEmptyText);
+  feedContent.appendChild(feedForm);
+  feedWrapper.appendChild(feedContent);
+
+  feedHeader.addEventListener("click", () => {
+    const isHidden = feedContent.style.display === "none";
+    feedContent.style.display = isHidden ? "block" : "none";
+    feedToggleBtn.textContent = isHidden ? "Dölj" : "Visa";
+  });
+
+  feedForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!canWriteFeed || !currentUser) return;
+
+    const text = feedInput.value.trim();
+    if (!text) return;
+
+    const now = new Date();
+    ev.feed.push({
+      id: now.getTime(),
+      text,
+      authorId: currentUser.id,
+      authorName: currentUser.name,
+      createdAt: now.toISOString()
+    });
+
+    feedInput.value = "";
+    renderFeed();
+  });
+
+  info.appendChild(feedWrapper);
+
+  // --- SWISH / BETALNING PER PASS ---
+  const paymentInfo = document.createElement("div");
+  paymentInfo.className = "payment-info";
+
+  const currentPlayerId = getCurrentPlayerIdForAttendance();
+  const currentPlayerUser = currentPlayerId ? getUserById(currentPlayerId) : null;
+
+  // Placeholder, fylls om spelare är vald
+  let updatePaymentUI = () => {};
+
+  if (currentPlayerUser && currentPlayerUser.role === "player") {
+    const priceForPlayer = computePriceForUserAndEvent(currentPlayerUser, ev);
+    const mainTextDiv = document.createElement("div");
+
+    if (priceForPlayer > 0) {
+      mainTextDiv.textContent =
+        `Din spelavgift för detta pass (beräknad): ${priceForPlayer.toFixed(0)} kr.`;
+    } else {
+      mainTextDiv.textContent =
+        "Inget att betala för detta pass (t.ex. terminskort eller 0 kr).";
+    }
+    paymentInfo.appendChild(mainTextDiv);
+
+    // BETALNINGSSTATUS (betald/inte betald)
+    const paymentStatusP = document.createElement("p");
+    paymentStatusP.style.marginTop = "4px";
+    paymentInfo.appendChild(paymentStatusP);
+
+    const statusBtnRow = document.createElement("div");
+    statusBtnRow.style.display = "flex";
+    statusBtnRow.style.flexWrap = "wrap";
+    statusBtnRow.style.gap = "4px";
+    statusBtnRow.style.marginTop = "2px";
+
+    const markPaidBtn = document.createElement("button");
+    markPaidBtn.type = "button";
+    markPaidBtn.textContent = "Markera betald";
+
+    const markUnpaidBtn = document.createElement("button");
+    markUnpaidBtn.type = "button";
+    markUnpaidBtn.textContent = "Markera obetald";
+
+    statusBtnRow.appendChild(markPaidBtn);
+    statusBtnRow.appendChild(markUnpaidBtn);
+    paymentInfo.appendChild(statusBtnRow);
+
+    // Swish-detaljer (visa bara om >0 kr och Swish är aktivt)
+    if (priceForPlayer > 0 && swishConfig.enabled && swishConfig.alias) {
+      const details = document.createElement("div");
+      details.className = "payment-details";
+      details.style.display = "none";
+
+      const amountText = priceForPlayer.toFixed(0);
+
+      const messageParts = [];
+      if (swishConfig.messagePrefix) messageParts.push(swishConfig.messagePrefix);
+      if (ev.title) messageParts.push(ev.title);
+      if (ev.date) messageParts.push(ev.date);
+      messageParts.push(currentPlayerUser.name);
+      const messageText = messageParts.join(" – ");
+
+      details.innerHTML = `
+        <p><strong>Swish-nummer:</strong> ${swishConfig.alias}</p>
+        <p><strong>Mottagare:</strong> ${swishConfig.recipientName || ""}</p>
+        <p><strong>Belopp:</strong> ${amountText} kr</p>
+        <p><strong>Meddelande:</strong> ${messageText}</p>
+      `;
+
+      // Deeplink + fallback
+      const deepLink = buildSwishDeepLink(priceForPlayer, messageText);
+
+      if (deepLink && isMobileWeb()) {
+        // På mobil → stor primärknapp för Swish
+        const swishButton = document.createElement("button");
+        swishButton.type = "button";
+        swishButton.className = "btn-primary payment-toggle-btn";
+        swishButton.textContent = "Betala med Swish";
+        swishButton.addEventListener("click", () => {
+          window.location.href = deepLink;
+        });
+        paymentInfo.appendChild(swishButton);
+      } else if (deepLink) {
+        // På dator: liten hint-länk inne i detaljerna
+        const swishLinkP = document.createElement("p");
+        swishLinkP.className = "hint";
+        const swishLink = document.createElement("a");
+        swishLink.href = deepLink;
+        swishLink.target = "_self";
+        swishLink.textContent = "Försök öppna Swish (om din enhet stödjer det)";
+        swishLink.style.textDecoration = "underline";
+        swishLink.style.cursor = "pointer";
+        swishLinkP.appendChild(swishLink);
+        details.appendChild(swishLinkP);
+      }
+
+      const btnRow = document.createElement("div");
+      btnRow.className = "payment-copy-row";
+
+      function makeCopyButton(label, value) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "copy-btn";
+        b.textContent = label;
+        b.addEventListener("click", () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(value).then(() => {
+              const old = b.textContent;
+              b.textContent = "Kopierat!";
+              setTimeout(() => { b.textContent = old; }, 1200);
+            }).catch(() => {
+              window.prompt("Kopiera texten:", value);
+            });
+          } else {
+            window.prompt("Kopiera texten:", value);
+          }
+        });
+        return b;
+      }
+
+      btnRow.appendChild(makeCopyButton("Kopiera nummer", swishConfig.alias));
+      btnRow.appendChild(makeCopyButton("Kopiera belopp", amountText));
+      btnRow.appendChild(makeCopyButton("Kopiera meddelande", messageText));
+      details.appendChild(btnRow);
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.className = "btn-primary payment-toggle-btn";
+      toggleBtn.textContent = "Visa Swish-detaljer";
+      toggleBtn.addEventListener("click", () => {
+        const hidden = details.style.display === "none";
+        details.style.display = hidden ? "block" : "none";
+        toggleBtn.textContent = hidden ? "Dölj Swish-detaljer" : "Visa Swish-detaljer";
+      });
+
+      paymentInfo.appendChild(toggleBtn);
+      paymentInfo.appendChild(details);
+    }
+
+    const playerIdForPayment = currentPlayerUser.id;
+
+    updatePaymentUI = () => {
+      const entry = ev.attendance[playerIdForPayment];
+
+      if (!entry || entry.status !== "yes") {
+        paymentStatusP.textContent =
+          'Markera först "Kommer" för att kunna sätta betalning.';
+        markPaidBtn.disabled = true;
+        markUnpaidBtn.disabled = true;
+        markPaidBtn.classList.remove("btn-primary");
+        markUnpaidBtn.classList.remove("btn-primary");
+        return;
+      }
+
+      const isPaid = !!entry.paid;
+      const canSet = canCurrentUserSetPaymentForPlayer(currentPlayerUser);
+
+      paymentStatusP.textContent = isPaid
+        ? "Betalning: Betald (registrerat i appen)."
+        : "Betalning: Inte betald (ännu ej markerad i appen).";
+
+      markPaidBtn.disabled = !canSet;
+      markUnpaidBtn.disabled = !canSet;
+
+      markPaidBtn.classList.toggle("btn-primary", isPaid);
+      markUnpaidBtn.classList.toggle("btn-primary", !isPaid);
+    };
+
+    markPaidBtn.addEventListener("click", () => {
+      if (!canCurrentUserSetPaymentForPlayer(currentPlayerUser)) return;
+      const entry = ev.attendance[playerIdForPayment];
+      if (!entry || entry.status !== "yes") return;
+      entry.paid = true;
+      updatePaymentUI();
+    });
+
+    markUnpaidBtn.addEventListener("click", () => {
+      if (!canCurrentUserSetPaymentForPlayer(currentPlayerUser)) return;
+      const entry = ev.attendance[playerIdForPayment];
+      if (!entry || entry.status !== "yes") return;
+      entry.paid = false;
+      updatePaymentUI();
+    });
+
+    updatePaymentUI();
+  } else {
+    paymentInfo.textContent =
+      "Logga in som spelare (eller välj spelare) för att se spelavgift och betalningsstatus.";
+  }
+
+  info.appendChild(paymentInfo);
+  // --- SLUT SWISH / BETALNING ---
+
+  const buttons = document.createElement("div");
+  buttons.className = "attendance-buttons";
+
+  const yesBtn = document.createElement("button");
+  yesBtn.textContent = "Kommer";
+  yesBtn.className = "btn-yes";
+
+  const noBtn = document.createElement("button");
+  noBtn.textContent = "Kommer inte";
+  noBtn.className = "btn-no";
+
+  const status = document.createElement("span");
+  status.className = "status-text";
+
+  function updateVisual() {
+    const playerId = getCurrentPlayerIdForAttendance();
+    const user = playerId ? getUserById(playerId) : null;
+
+    yesBtn.classList.remove("selected");
+    noBtn.classList.remove("selected");
+
+    if (!user || user.role !== "player") {
+      status.textContent = "";
+    } else {
+      const entry = ev.attendance[playerId];
+      const st = entry?.status;
+      const reason = entry?.reason;
+
+      if (st === "yes") {
+        yesBtn.classList.add("selected");
+        status.textContent = `${user.name}: Kommer`;
+      } else if (st === "no") {
+        noBtn.classList.add("selected");
+        status.textContent = reason
+          ? `${user.name}: Kommer inte (${reason})`
+          : `${user.name}: Kommer inte`;
+      } else {
+        status.textContent = "";
+      }
+    }
+
+    summaryDiv.textContent = buildEventSummaryText(ev);
+    updatePaymentUI();
+  }
+
+  yesBtn.addEventListener("click", () => {
+    const playerId = getCurrentPlayerIdForAttendance();
+    if (!playerId) return;
+
+    let entry = ev.attendance[playerId];
+    if (entry && entry.status === "yes") {
+      // avmarkera närvaro
+      delete ev.attendance[playerId];
+    } else {
+      const prevPaid = entry && typeof entry.paid === "boolean" ? entry.paid : false;
+      ev.attendance[playerId] = { status: "yes", paid: prevPaid };
+    }
+    updateVisual();
+    updatePlayerStats();
+    renderEconomy();
+  });
+
+  noBtn.addEventListener("click", () => {
+    const playerId = getCurrentPlayerIdForAttendance();
+    if (!playerId) return;
+
+    const entry = ev.attendance[playerId];
+    if (entry && entry.status === "no") {
+      delete ev.attendance[playerId];
+      updateVisual();
+      updatePlayerStats();
+      renderEconomy();
+      return;
+    }
+
+    const input = window.prompt(
+      "Varför kommer du inte?\nSkriv t.ex: sjuk, jobbar, bortrest eller annat:"
+    );
+
+    if (!input) return;
+
+    const lower = input.toLowerCase();
+    let reason;
+    if (lower.startsWith("sjuk")) reason = "Sjuk";
+    else if (lower.startsWith("job")) reason = "Jobbar";
+    else if (lower.startsWith("bort")) reason = "Bortrest";
+    else reason = "Annat: " + input;
+
+    ev.attendance[playerId] = { status: "no", reason, paid: false };
+    updateVisual();
+    updatePlayerStats();
+    renderEconomy();
+  });
+
+  buttons.appendChild(yesBtn);
+  buttons.appendChild(noBtn);
+  buttons.appendChild(status);
+
+  row.appendChild(info);
+  row.appendChild(buttons);
+  li.appendChild(row);
+
+  updateVisual();
+  return li;
+}
+
+
+    // ---- EVENTLISTA ----
+    function renderEvents() {
+      eventList.innerHTML = "";
+
+      if (events.length === 0) {
+        noEventsText.style.display = "block";
+      } else {
+        noEventsText.style.display = "none";
+      }
+
+      events.forEach(ev => {
+        eventList.appendChild(createEventRow(ev));
+      });
+
+      renderGuestEventOptions();
+    }
+
+    function renderGuestEventOptions() {
+      guestEventSelect.innerHTML = "";
+
+      if (events.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Inga aktiviteter att bjuda in till";
+        guestEventSelect.appendChild(opt);
+        guestEventSelect.disabled = true;
+        return;
+      }
+
+      guestEventSelect.disabled = false;
+      events.forEach(ev => {
+        const opt = document.createElement("option");
+        opt.value = String(ev.id);
+        const dateText = ev.date ? formatDate(ev.date) : "-";
+        opt.textContent = `${dateText} ${ev.time} – ${ev.title}`;
+        guestEventSelect.appendChild(opt);
+      });
+    }
+
+    // ---- ADMIN-TABELL ----
+    function renderUserTable() {
+      if (!userIsAdmin()) {
+        adminSection.style.display = "none";
+        return;
+      }
+      adminSection.style.display = "block";
+      userTableBody.innerHTML = "";
+
+      users.forEach(u => {
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = u.name;
+
+        const roleTd = document.createElement("td");
+        const roleSelect = document.createElement("select");
+        ROLES.forEach(r => {
+          const opt = document.createElement("option");
+          opt.value = r.value;
+          opt.textContent = r.label;
+          if (r.value === u.role) opt.selected = true;
+          roleSelect.appendChild(opt);
+        });
+        roleSelect.addEventListener("change", () => {
+          u.role = roleSelect.value;
+          if (currentUser && currentUser.id === u.id) currentUser.role = u.role;
+          renderPlayers();
+          renderEvents();
+          renderLoginUsers();
+          renderMemberTable();
+          renderMemberSelect();
+          initMembershipSelects();
+          updateRoleView();
+          renderEconomy();
+        });
+
+        const groupTd = document.createElement("td");
+        const groupSelect = document.createElement("select");
+        GROUPS.forEach(g => {
+          const opt = document.createElement("option");
+          opt.value = g.value;
+          opt.textContent = g.label;
+          if (g.value === u.group) opt.selected = true;
+          groupSelect.appendChild(opt);
+        });
+        groupSelect.addEventListener("change", () => {
+          u.group = groupSelect.value;
+          renderPlayers();
+          renderEvents();
+          renderLoginUsers();
+          renderMemberTable();
+          renderMemberSelect();
+          initMembershipSelects();
+          updateRoleView();
+          renderEconomy();
+        });
+
+        const membershipTd = document.createElement("td");
+        const membershipSelect = document.createElement("select");
+        MEMBERSHIP.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.value;
+          opt.textContent = m.label;
+          if (m.value === u.membership) opt.selected = true;
+          membershipSelect.appendChild(opt);
+        });
+        membershipSelect.addEventListener("change", () => {
+          u.membership = membershipSelect.value;
+          renderPlayers();
+          renderLoginUsers();
+          renderMemberTable();
+          renderEconomy();
+        });
+
+        roleTd.appendChild(roleSelect);
+        groupTd.appendChild(groupSelect);
+        membershipTd.appendChild(membershipSelect);
+
+        tr.appendChild(nameTd);
+        tr.appendChild(roleTd);
+        tr.appendChild(groupTd);
+        tr.appendChild(membershipTd);
+        userTableBody.appendChild(tr);
+      });
+    }
+
+    // ---- MEDLEMSREGISTER TABELL ----
+    function renderMemberTable() {
+      memberTableHead.innerHTML = "";
+      memberTableBody.innerHTML = "";
+      const theadRow = document.createElement("tr");
+
+      if (userIsAdmin()) {
+        const headers = [
+          "Namn","Grupp","Roll","Medlemskap",
+          "Kategori","Personnummer","Telefon","E-post","Kvitto"
+        ];
+        headers.forEach(text => {
+          const th = document.createElement("th");
+          th.textContent = text;
+          theadRow.appendChild(th);
+        });
+        memberTableHead.appendChild(theadRow);
+
+        users.forEach(u => {
+          const tr = document.createElement("tr");
+          const nameTd = document.createElement("td");
+          nameTd.textContent = u.name;
+          const groupTd = document.createElement("td");
+          groupTd.textContent = groupLabel(u.group);
+          const roleTd = document.createElement("td");
+          roleTd.textContent = roleLabel(u.role);
+          const membershipTd = document.createElement("td");
+          membershipTd.textContent = membershipLabel(u.membership);
+          const categoryTd = document.createElement("td");
+          categoryTd.textContent = categoryLabel(u.membershipCategory);
+          const personalTd = document.createElement("td");
+          personalTd.textContent = u.personalNumber || "";
+          const phoneTd = document.createElement("td");
+          phoneTd.textContent = u.phone || "";
+          const emailTd = document.createElement("td");
+          emailTd.textContent = u.email || "";
+          const receiptTd = document.createElement("td");
+          receiptTd.textContent = u.receiptWanted ? "Ja" : "Nej";
+
+          tr.appendChild(nameTd);
+          tr.appendChild(groupTd);
+          tr.appendChild(roleTd);
+          tr.appendChild(membershipTd);
+          tr.appendChild(categoryTd);
+          tr.appendChild(personalTd);
+          tr.appendChild(phoneTd);
+          tr.appendChild(emailTd);
+          tr.appendChild(receiptTd);
+          memberTableBody.appendChild(tr);
+        });
+      } else {
+        const headers = ["Namn","Grupp","Roll"];
+        headers.forEach(text => {
+          const th = document.createElement("th");
+          th.textContent = text;
+          theadRow.appendChild(th);
+        });
+        memberTableHead.appendChild(theadRow);
+
+        users.forEach(u => {
+          const tr = document.createElement("tr");
+          const nameTd = document.createElement("td");
+          nameTd.textContent = u.name;
+          const groupTd = document.createElement("td");
+          groupTd.textContent = groupLabel(u.group);
+          const roleTd = document.createElement("td");
+          roleTd.textContent = roleLabel(u.role);
+
+          tr.appendChild(nameTd);
+          tr.appendChild(groupTd);
+          tr.appendChild(roleTd);
+          memberTableBody.appendChild(tr);
+        });
+      }
+    }
+
+    // ---- MEDLEMSREGISTER REDIGERA ----
+    function renderMemberSelect() {
+      memberSelect.innerHTML = "";
+      users.forEach(u => {
+        const opt = document.createElement("option");
+        opt.value = String(u.id);
+        opt.textContent = u.name;
+        memberSelect.appendChild(opt);
+      });
+      if (users.length > 0) {
+        memberSelect.value = String(users[0].id);
+        fillMemberEditForm();
+      }
+    }
+
+    function fillMemberEditForm() {
+      const id = Number(memberSelect.value);
+      const u = getUserById(id);
+      if (!u) return;
+      memberEmailInput.value = u.email || "";
+      memberPersonalNumberInput.value = u.personalNumber || "";
+      memberPhoneInput.value = u.phone || "";
+      memberCategorySelect.value = u.membershipCategory || "";
+      memberMembershipSelect.value = u.membership || "member";
+      memberReceiptSelect.value = u.receiptWanted ? "yes" : "no";
+      memberEditError.style.display = "none";
+    }
+
+    memberSelect.addEventListener("change", fillMemberEditForm);
+
+    memberEditForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userIsAdmin()) {
+        memberEditError.textContent = "Endast admin kan ändra medlemmar.";
+        memberEditError.style.display = "block";
+        return;
+      }
+      const id = Number(memberSelect.value);
+      const u = getUserById(id);
+      if (!u) {
+        memberEditError.textContent = "Kunde inte hitta vald medlem.";
+        memberEditError.style.display = "block";
+        return;
+      }
+      u.email = memberEmailInput.value.trim();
+      u.personalNumber = memberPersonalNumberInput.value.trim();
+      u.phone = memberPhoneInput.value.trim();
+      u.membershipCategory = memberCategorySelect.value;
+      u.membership = memberMembershipSelect.value;
+      u.receiptWanted = (memberReceiptSelect.value === "yes");
+
+      memberEditError.style.display = "none";
+      renderLoginUsers();
+      renderPlayers();
+      renderUserTable();
+      renderMemberTable();
+      renderEconomy();
+      updateRoleView();
+      initMembershipSelects();
+    });
+
+    // ---- EKONOMI RENDER ----
+    function renderEconomy() {
+      if (!currentUser) {
+        economyAdminView.style.display = "none";
+        economyPublicView.style.display = "none";
+        return;
+      }
+      const isAdmin = userIsAdmin();
+      economyAdminView.style.display = isAdmin ? "block" : "none";
+      economyPublicView.style.display = isAdmin ? "none" : "block";
+
+      let totalRevenuePass = 0;
+      let totalCostPass = 0;
+      let totalResultPass = 0;
+
+      economyPassTbody.innerHTML = "";
+      events.forEach(ev => {
+        const econ = calculateEventEconomy(ev);
+        const tr = document.createElement("tr");
+
+        const dateTd = document.createElement("td");
+        dateTd.textContent = ev.date ? formatDate(ev.date) : "-";
+        const titleTd = document.createElement("td");
+        titleTd.textContent = ev.title;
+        const groupTd = document.createElement("td");
+        groupTd.textContent = groupLabelForEvent(ev.group);
+        const typeTd = document.createElement("td");
+        typeTd.textContent = ev.type === "extra" ? "Extra" : "Ordinarie";
+        const countTd = document.createElement("td");
+        countTd.textContent = `${econ.membersCount} / ${econ.nonMembersCount}`;
+        const revenueTd = document.createElement("td");
+        revenueTd.textContent = econ.revenue.toFixed(0);
+        const costTd = document.createElement("td");
+        costTd.textContent = econ.cost.toFixed(0);
+        const resultTd = document.createElement("td");
+        resultTd.textContent = econ.result.toFixed(0);
+
+        tr.appendChild(dateTd);
+        tr.appendChild(titleTd);
+        tr.appendChild(groupTd);
+        tr.appendChild(typeTd);
+        tr.appendChild(countTd);
+        tr.appendChild(revenueTd);
+        tr.appendChild(costTd);
+        tr.appendChild(resultTd);
+        economyPassTbody.appendChild(tr);
+
+        totalRevenuePass += econ.revenue;
+        totalCostPass += econ.cost;
+        totalResultPass += econ.result;
+      });
+
+      economyPassSummary.textContent =
+        `Summa pass: intäkter ${totalRevenuePass.toFixed(0)} kr, ` +
+        `kostnader ${totalCostPass.toFixed(0)} kr, resultat ${totalResultPass.toFixed(0)} kr.`;
+
+      economyTxTbody.innerHTML = "";
+      let totalIncomeOther = 0;
+      let totalExpenseOther = 0;
+
+      transactions.forEach(tx => {
+        const tr = document.createElement("tr");
+        const dateTd = document.createElement("td");
+        dateTd.textContent = tx.date ? formatDate(tx.date) : "-";
+        const typeTd = document.createElement("td");
+        typeTd.textContent = tx.type === "income" ? "Inkomst" : "Kostnad";
+        const categoryTd = document.createElement("td");
+        categoryTd.textContent = tx.category || "";
+        const descTd = document.createElement("td");
+        descTd.textContent = tx.description || "";
+        const amountTd = document.createElement("td");
+        amountTd.textContent = tx.amount.toFixed(0);
+
+        tr.appendChild(dateTd);
+        tr.appendChild(typeTd);
+        tr.appendChild(categoryTd);
+        tr.appendChild(descTd);
+        tr.appendChild(amountTd);
+        economyTxTbody.appendChild(tr);
+
+        if (tx.type === "income") totalIncomeOther += tx.amount;
+        else if (tx.type === "expense") totalExpenseOther += tx.amount;
+      });
+
+      const totalOtherResult = totalIncomeOther - totalExpenseOther;
+      const totalBalance = totalResultPass + totalOtherResult;
+
+      economyTotalText.textContent =
+        `Pass-resultat: ${totalResultPass.toFixed(0)} kr. ` +
+        `Övriga intäkter: ${totalIncomeOther.toFixed(0)} kr, ` +
+        `övriga kostnader: ${totalExpenseOther.toFixed(0)} kr. ` +
+        `Total kassa (pass + övrigt): ${totalBalance.toFixed(0)} kr.`;
+
+      economyPublicBalance.textContent =
+        `Beräknad kassa: ${totalBalance.toFixed(0)} kr (pass + övriga transaktioner).`;
+    }
+
+    // ---- LOGIN-VY/VÄXLING ----
+    function showLoginView() {
+      currentUser = null;
+      selectedPlayerId = null;
+      loginView.style.display = "block";
+      appView.style.display = "none";
+      loginError.style.display = "none";
+      loginPasswordInput.value = "";
+      headerRoleText.textContent = "Inte inloggad";
+      logoutBtn.style.display = "none";
+      setActiveTab("overview");
+      renderLoginUsers();
+    }
+
+    function showAppView() {
+      loginView.style.display = "none";
+      appView.style.display = "block";
+      logoutBtn.style.display = "inline-block";
+
+      if (currentUser.role === "player") {
+        selectedPlayerId = currentUser.id;
+        groupFilterValue = currentUser.group || "all";
+        groupFilterSelect.value = groupFilterValue;
+      } else {
+        const players = getPlayers();
+        if (!selectedPlayerId && players.length > 0) {
+          selectedPlayerId = players[0].id;
+        }
+      }
+
+      setActiveTab("overview");
+      renderPlayers();
+      renderEvents();
+      renderUserTable();
+      renderMemberTable();
+      renderMemberSelect();
+      initMembershipSelects();
+      renderEconomy();
+      updateRoleView();
+    }
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const userId = Number(loginUserSelect.value);
+      const password = loginPasswordInput.value.trim();
+      const user = getUserById(userId);
+      if (!user) {
+        loginError.textContent = "Okänd användare.";
+        loginError.style.display = "block";
+        return;
+      }
+      if (password !== user.password) {
+        loginError.textContent = "Fel lösenord.";
+        loginError.style.display = "block";
+        return;
+      }
+      loginError.style.display = "none";
+      currentUser = user;
+      showAppView();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      showLoginView();
+    });
+
+    // ---- NY AKTIVITET ----
+    eventForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userCanManageEvents()) {
+        eventError.textContent = "Du har inte rätt roll för att skapa aktiviteter.";
+        eventError.style.display = "block";
+        return;
+      }
+
+      const date = dateInput.value || "";
+      const time = timeInput.value.trim();
+      const duration = durationSelect.value || "2h";
+      const courts = Number(courtsInput.value) || 1;
+      const type = eventTypeSelect.value || "ordinarie";
+      const title = titleInput.value.trim();
+      const place = placeInput.value.trim();
+      const description = descInput.value.trim();
+      const groupValue = eventGroupSelect.value;
+
+      if (!title || !time || !place) {
+        eventError.textContent = "Titel, tid och plats måste vara ifyllda.";
+        eventError.style.display = "block";
+        return;
+      }
+
+      const groupAge = GROUP_AGE[groupValue] || "vuxen";
+
+      let pm;
+      if (priceMemberInput.value !== "") {
+        pm = Number(priceMemberInput.value);
+      } else {
+        const table = costTable.dropIn.member[groupAge];
+        pm = table
+          ? (duration === "1_5h" ? table["1_5h"] : table["2h"])
+          : 0;
+      }
+
+      let pn;
+      if (priceNonMemberInput.value !== "") {
+        pn = Number(priceNonMemberInput.value);
+      } else {
+        const table = costTable.dropIn.nonmember[groupAge];
+        pn = table
+          ? (duration === "1_5h" ? table["1_5h"] : table["2h"])
+          : 0;
+      }
+
+      const durationHours = duration === "1_5h" ? 1.5 : 2;
+      const cost = (costTable.courtHourlyCost || 0) * durationHours * courts;
+
+      eventError.style.display = "none";
+
+      events.push({
+        id: nextEventId++,
+        title,
+        date,
+        time,
+        duration,
+        courts,
+        type,
+        place,
+        group: groupValue,
+        description,
+        priceMember: pm,
+        priceNonMember: pn,
+        cost,
+        attendance: {},
+        guests: [],
+        feed: [] // game-feed även på nya pass
+      });
+
+      dateInput.value = "";
+      timeInput.value = "";
+      durationSelect.value = "2h";
+      courtsInput.value = "1";
+      eventTypeSelect.value = "ordinarie";
+      titleInput.value = "";
+      placeInput.value = "";
+      descInput.value = "";
+      priceMemberInput.value = "";
+      priceNonMemberInput.value = "";
+
+      renderEvents();
+      updatePlayerStats();
+      renderEconomy();
+    });
+
+    activePlayerSelect.addEventListener("change", (e) => {
+      const value = Number(e.target.value);
+      selectedPlayerId = value;
+      renderEvents();
+      updatePlayerStats();
+      renderEconomy();
+    });
+
+    newUserForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userIsAdmin()) {
+        newUserError.textContent = "Endast admin kan skapa användare.";
+        newUserError.style.display = "block";
+        return;
+      }
+      const name = newUserNameInput.value.trim();
+      const password = newUserPasswordInput.value.trim();
+      const role = newUserRoleSelect.value;
+      const group = newUserGroupSelect.value;
+      const membership = newUserMembershipSelect.value;
+      if (!name || !password) {
+        newUserError.textContent = "Namn och lösenord måste fyllas i.";
+        newUserError.style.display = "block";
+        return;
+      }
+      newUserError.style.display = "none";
+
+      const newUser = {
+        id: nextUserId++,
+        name,
+        role,
+        password,
+        group,
+        membership,
+        email: "",
+        phone: "",
+        personalNumber: "",
+        membershipCategory: "",
+        receiptWanted: false,
+        membershipPaidYear: null,
+        membershipPaidAmount: 0,
+        membershipPaidDate: "",
+        termCards: []
+      };
+      users.push(newUser);
+
+      newUserNameInput.value = "";
+      newUserPasswordInput.value = "";
+      newUserRoleSelect.value = "player";
+      newUserGroupSelect.value = GROUPS[0].value;
+      newUserMembershipSelect.value = "member";
+
+      renderLoginUsers();
+      renderPlayers();
+      renderUserTable();
+      renderMemberTable();
+      renderMemberSelect();
+      initMembershipSelects();
+      renderEvents();
+      renderEconomy();
+      updateRoleView();
+    });
+
+    guestForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (events.length === 0) {
+        guestError.textContent = "Det finns inga aktiviteter att bjuda in till.";
+        guestError.style.display = "block";
+        return;
+      }
+      const eventId = Number(guestEventSelect.value);
+      const name = guestNameInput.value.trim();
+      if (!eventId) {
+        guestError.textContent = "Välj en aktivitet.";
+        guestError.style.display = "block";
+        return;
+      }
+      if (!name) {
+        guestError.textContent = "Namn på gästspelare måste fyllas i.";
+        guestError.style.display = "block";
+        return;
+      }
+      guestError.style.display = "none";
+
+      const ev = findEventById(eventId);
+      if (!ev) {
+        guestError.textContent = "Kunde inte hitta aktiviteten.";
+        guestError.style.display = "block";
+        return;
+      }
+      if (!ev.guests) ev.guests = [];
+      ev.guests.push(name);
+
+      guestNameInput.value = "";
+      renderEvents();
+    });
+
+    // ---- ÖVRIGA TRANSAKTIONER ----
+    economyTxForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userIsAdmin()) return;
+
+      const date = txDateInput.value || "";
+      const type = txTypeSelect.value;
+      const category = txCategoryInput.value.trim() || (type === "income" ? "Inkomst" : "Kostnad");
+      const amount = Number(txAmountInput.value);
+      const description = txDescriptionInput.value.trim();
+
+      if (!amount || amount <= 0) {
+        alert("Belopp måste vara större än 0.");
+        return;
+      }
+
+      transactions.push({
+        id: nextTxId++,
+        date,
+        type,
+        category,
+        description,
+        amount
+      });
+
+      txDateInput.value = "";
+      txCategoryInput.value = "";
+      txAmountInput.value = "";
+      txDescriptionInput.value = "";
+      renderEconomy();
+    });
+
+    // ---- KOSTNADSTABELL FORM ----
+    function fillCostTableForm() {
+      costPassCostInput.value = costTable.courtHourlyCost;
+      costFeeBarnInput.value = costTable.membershipFees.barn;
+      costFeeVuxenInput.value = costTable.membershipFees.vuxen;
+      costFeeFamiljInput.value = costTable.membershipFees.familj;
+      costTermStandardInput.value = costTable.termCard.standard;
+      costTermCampaignInput.value = costTable.termCard.campaignFirst;
+    }
+
+    costTableForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userIsAdmin()) return;
+      costTable.courtHourlyCost = Number(costPassCostInput.value) || 0;
+      costTable.membershipFees.barn = Number(costFeeBarnInput.value) || 0;
+      costTable.membershipFees.vuxen = Number(costFeeVuxenInput.value) || 0;
+      costTable.membershipFees.familj = Number(costFeeFamiljInput.value) || 0;
+      costTable.termCard.standard = Number(costTermStandardInput.value) || 0;
+      costTable.termCard.campaignFirst = Number(costTermCampaignInput.value) || 0;
+      alert("Kostnadstabell 2026 uppdaterad (gäller nya pass framåt).");
+    });
+
+    // ---- MEDLEMSBETALNINGAR ----
+    function initMembershipSelects() {
+      mpMemberSelect.innerHTML = "";
+      receiptMemberSelect.innerHTML = "";
+      users.forEach(u => {
+        const opt1 = document.createElement("option");
+        opt1.value = String(u.id);
+        opt1.textContent = u.name;
+        mpMemberSelect.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = String(u.id);
+        opt2.textContent = u.name;
+        receiptMemberSelect.appendChild(opt2);
+      });
+      if (users.length > 0) {
+        mpMemberSelect.value = String(users[0].id);
+        receiptMemberSelect.value = String(users[0].id);
+        updateMpSuggestedAmount();
+      }
+    }
+
+    function updateMpSuggestedAmount() {
+      const id = Number(mpMemberSelect.value);
+      const u = getUserById(id);
+      const type = mpTypeSelect.value;
+      if (!u) {
+        mpAmountInput.value = "";
+        return;
+      }
+
+      let amount = 0;
+      if (type === "membership2026") {
+        let cat = u.membershipCategory || "vuxen";
+        if (!costTable.membershipFees[cat]) cat = "vuxen";
+        amount = costTable.membershipFees[cat] || 0;
+      } else if (type === "term-VT-2026" || type === "term-HT-2026") {
+        amount = costTable.termCard.standard || 0;
+      }
+      mpAmountInput.value = amount || "";
+    }
+
+    mpMemberSelect.addEventListener("change", updateMpSuggestedAmount);
+    mpTypeSelect.addEventListener("change", updateMpSuggestedAmount);
+
+    membershipPaymentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!userIsAdmin()) return;
+
+      const id = Number(mpMemberSelect.value);
+      const u = getUserById(id);
+      const type = mpTypeSelect.value;
+      let amount = Number(mpAmountInput.value);
+      let date = mpDateInput.value || "";
+
+      if (!u) {
+        alert("Kunde inte hitta medlem.");
+        return;
+      }
+
+      if (!amount || amount <= 0) {
+        updateMpSuggestedAmount();
+        amount = Number(mpAmountInput.value);
+      }
+      if (!amount || amount <= 0) {
+        alert("Belopp måste vara större än 0.");
+        return;
+      }
+
+      if (!date) {
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, "0");
+        const d = String(today.getDate()).padStart(2, "0");
+        date = `${y}-${m}-${d}`;
+      }
+
+      let category, description;
+      if (type === "membership2026") {
+        category = "Medlemsavgift";
+        description = `Medlemsavgift 2026 – ${u.name}`;
+        u.membershipPaidYear = 2026;
+        u.membershipPaidAmount = amount;
+        u.membershipPaidDate = date;
+      } else {
+        category = "Terminskort";
+        const termName = type === "term-VT-2026" ? "VT 2026" : "HT 2026";
+        description = `Terminskort ${termName} – ${u.name}`;
+        if (!u.termCards) u.termCards = [];
+        u.termCards.push({
+          term: termName,
+          amount,
+          date
+        });
+      }
+
+      transactions.push({
+        id: nextTxId++,
+        date,
+        type: "income",
+        category,
+        description,
+        amount
+      });
+
+      mpDateInput.value = "";
+      updateMpSuggestedAmount();
+      renderEconomy();
+      alert("Betalning registrerad.");
+    });
+
+    // ---- GEMENSAM FUNKTION FÖR KVITTO-BERÄKNING ----
+    function calculateReceiptForUser(u, fromStr, toStr) {
+      if (!u) {
+        return {
+          passesCount: 0,
+          passesAmount: 0,
+          membershipAmount: 0,
+          membershipText: "Ingen medlem.",
+          termAmount: 0,
+          termLines: [],
+          total: 0
+        };
+      }
+
+      let fromDate = fromStr ? new Date(fromStr) : null;
+      let toDate = toStr ? new Date(toStr) : null;
+
+      let passesCount = 0;
+      let passesAmount = 0;
+
+      events.forEach(ev => {
+        if (!ev.date) return;
+        const d = new Date(ev.date);
+        if (fromDate && d < fromDate) return;
+        if (toDate && d > toDate) return;
+
+        const entry = ev.attendance[u.id];
+        if (!entry || entry.status !== "yes") return;
+
+        // prislogik med terminskort
+        let price = 0;
+        if (u.membership === "member") {
+          if (ev.type === "ordinarie" && userHasTermCardForEvent(u, ev)) {
+            price = 0;
+          } else {
+            price = Number(ev.priceMember) || 0;
+          }
+        } else {
+          price = Number(ev.priceNonMember) || 0;
+        }
+
+        passesCount++;
+        passesAmount += price;
+      });
+
+      let membershipAmount = 0;
+      let membershipText = "Ingen registrerad medlemsavgift för 2026.";
+      if (u.membershipPaidYear === 2026) {
+        membershipAmount = Number(u.membershipPaidAmount) || 0;
+        const d = u.membershipPaidDate ? formatDate(u.membershipPaidDate) : "";
+        membershipText = `Medlemsavgift 2026: ${membershipAmount.toFixed(0)} kr` +
+          (d ? ` (betald ${d})` : "");
+      }
+
+      let termAmount = 0;
+      let termLines = [];
+      if (u.termCards && u.termCards.length > 0) {
+        u.termCards.forEach(tc => {
+          const d = tc.date ? formatDate(tc.date) : "";
+          termAmount += Number(tc.amount) || 0;
+          termLines.push(`Terminskort ${tc.term}: ${(tc.amount || 0).toFixed(0)} kr` +
+            (d ? ` (betald ${d})` : ""));
+        });
+      }
+
+      const total = passesAmount + membershipAmount + termAmount;
+
+      return {
+        passesCount,
+        passesAmount,
+        membershipAmount,
+        membershipText,
+        termAmount,
+        termLines,
+        total
+      };
+    }
+
+    // ---- KVITTO-UNDERLAG (ADMIN) ----
+    receiptForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = Number(receiptMemberSelect.value);
+      const u = getUserById(id);
+      if (!u) {
+        receiptResult.innerHTML = "<p>Kunde inte hitta medlem.</p>";
+        return;
+      }
+
+      const fromStr = receiptFromInput.value;
+      const toStr = receiptToInput.value;
+
+      const result = calculateReceiptForUser(u, fromStr, toStr);
+
+      const fromText = fromStr ? formatDate(fromStr) : "...";
+      const toText = toStr ? formatDate(toStr) : "...";
+
+      let html = "";
+      html += `<p><strong>Medlem:</strong> ${u.name}</p>`;
+      html += `<p><strong>Period:</strong> ${fromText} – ${toText}</p>`;
+      html += `<p><strong>Antal pass:</strong> ${result.passesCount}</p>`;
+      html += `<p><strong>Summa spelavgifter:</strong> ${result.passesAmount.toFixed(0)} kr</p>`;
+      html += `<p><strong>Medlemsavgift:</strong> ${result.membershipAmount.toFixed(0)} kr</p>`;
+      html += `<p>${result.membershipText}</p>`;
+
+      if (result.termLines.length > 0) {
+        html += `<p><strong>Terminskort:</strong> ${result.termAmount.toFixed(0)} kr</p>`;
+        html += "<ul>";
+        result.termLines.forEach(l => {
+          html += `<li>${l}</li>`;
+        });
+        html += "</ul>";
+      } else {
+        html += `<p><strong>Terminskort:</strong> 0 kr</p>`;
+      }
+
+      html += `<p><strong>Totalt (underlag kvitto):</strong> ${result.total.toFixed(0)} kr</p>`;
+
+      receiptResult.innerHTML = html;
+    });
+
+    // ---- MITT KVITTO (ALLA) ----
+    selfReceiptForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentUser) {
+        selfReceiptResult.innerHTML = "<p>Du måste vara inloggad för att använda den här funktionen.</p>";
+        return;
+      }
+
+      const u = currentUser;
+      const fromStr = selfReceiptFromInput.value;
+      const toStr = selfReceiptToInput.value;
+
+      const result = calculateReceiptForUser(u, fromStr, toStr);
+
+      const fromText = fromStr ? formatDate(fromStr) : "...";
+      const toText = toStr ? formatDate(toStr) : "...";
+
+      let html = "";
+      html += `<p><strong>Medlem:</strong> ${u.name}</p>`;
+      html += `<p><strong>Period:</strong> ${fromText} – ${toText}</p>`;
+      html += `<p><strong>Antal pass:</strong> ${result.passesCount}</p>`;
+      html += `<p><strong>Summa spelavgifter:</strong> ${result.passesAmount.toFixed(0)} kr</p>`;
+      html += `<p><strong>Medlemsavgift:</strong> ${result.membershipAmount.toFixed(0)} kr</p>`;
+      html += `<p>${result.membershipText}</p>`;
+
+      if (result.termLines.length > 0) {
+        html += `<p><strong>Terminskort:</strong> ${result.termAmount.toFixed(0)} kr</p>`;
+        html += "<ul>";
+        result.termLines.forEach(l => {
+          html += `<li>${l}</li>`;
+        });
+        html += "</ul>";
+      } else {
+        html += `<p><strong>Terminskort:</strong> 0 kr</p>`;
+      }
+
+      html += `<p><strong>Totalt (underlag kvitto):</strong> ${result.total.toFixed(0)} kr</p>`;
+
+      selfReceiptResult.innerHTML = html;
+    });
+
+    // ---- SWISH-INSTÄLLNINGAR (ADMIN) ----
+    function fillSwishSettingsForm() {
+      if (!swishSettingsForm) return;
+      swishEnabledSelect.value = swishConfig.enabled ? "yes" : "no";
+      swishAliasInput.value = swishConfig.alias || "";
+      swishRecipientNameInput.value = swishConfig.recipientName || "";
+      swishMessagePrefixInput.value = swishConfig.messagePrefix || "";
+    }
+
+    if (swishSettingsForm) {
+      swishSettingsForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!userIsAdmin()) {
+          alert("Endast admin kan ändra Swish-inställningar.");
+          return;
+        }
+        swishConfig.enabled = (swishEnabledSelect.value === "yes");
+        swishConfig.alias = swishAliasInput.value.trim();
+        swishConfig.recipientName = swishRecipientNameInput.value.trim();
+        swishConfig.messagePrefix = swishMessagePrefixInput.value.trim();
+        alert("Swish-inställningar uppdaterade.");
+      });
+    }
+
+    // ---- INIT ----
+    function initEventGroupSelect() {
+      eventGroupSelect.innerHTML = "";
+      GROUPS.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.value;
+        opt.textContent = g.label;
+        eventGroupSelect.appendChild(opt);
+      });
+      eventGroupSelect.value = GROUPS[0].value;
+    }
+
+    function initNewUserGroupSelect() {
+      newUserGroupSelect.innerHTML = "";
+      GROUPS.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.value;
+        opt.textContent = g.label;
+        newUserGroupSelect.appendChild(opt);
+      });
+      newUserGroupSelect.value = GROUPS[0].value;
+    }
+
+    function initMemberCategorySelect() {
+      memberCategorySelect.innerHTML = "";
+      MEMBER_CATEGORIES.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.value;
+        opt.textContent = c.label;
+        memberCategorySelect.appendChild(opt);
+      });
+      memberCategorySelect.value = "";
+    }
+
+    // START
+    renderLoginUsers();
+    initGroupFilter();
+    initEventGroupSelect();
+    initNewUserGroupSelect();
+    initMemberCategorySelect();
+    fillCostTableForm();
+    initMembershipSelects();
+    fillSwishSettingsForm();
+    showLoginView();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
