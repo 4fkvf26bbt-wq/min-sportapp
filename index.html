@@ -1224,6 +1224,13 @@
       recipientName: "Vår förening",     // visas i appen
       messagePrefix: "Träning"           // blir början på Swish-meddelandet
     };
+    // Förenklad / neutral deep link-funktion så att appen inte kraschar.
+// Just nu försöker vi inte öppna Swish automatiskt, utan bara visa/kopiera uppgifterna.
+function buildSwishDeepLink(amountNumber, message) {
+  // Returnera null = ingen deeplink.
+  return null;
+}
+
 
     // ---- DATA ----
     let nextUserId = 1;
@@ -1829,29 +1836,7 @@ function encodeSwishData(obj) {
   return btoa(unescape(encodeURIComponent(json)));
 }
 
-function buildSwishDeepLink(amountNumber, message) {
-  if (!swishConfig.alias) return null;
 
-  const amount = Number(amountNumber || 0);
-  if (!amount || amount <= 0) return null;
-
-  const payload = {
-    version: 1,
-    payee: swishConfig.alias.replace(/\s+/g, ""),
-    amount: amount.toFixed(0)
-  };
-
-  const json = JSON.stringify(payload);
-  const data = btoa(unescape(encodeURIComponent(json)));
-
-  return `swish://payment?data=${encodeURIComponent(data)}`;
-}
-
-
-  const data = encodeSwishData(payload);
-  // Viktigt: data=... istället för version/payee/amount/message direkt
-  return `swish://payment?data=${encodeURIComponent(data)}`;
-}
 
 
 function isMobileWeb() {
