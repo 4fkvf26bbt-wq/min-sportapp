@@ -1847,7 +1847,6 @@ function buildSwishDeepLink(amountNumber, message) {
   return `swish://payment?data=${encodeURIComponent(data)}`;
 }
 
-  };
 
   const data = encodeSwishData(payload);
   // Viktigt: data=... istället för version/payee/amount/message direkt
