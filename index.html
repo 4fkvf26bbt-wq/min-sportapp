@@ -1263,8 +1263,35 @@ function buildSwishDeepLink(amountNumber, message) {
   return null;
 }
 
+    // ---- FIRESTORE (EVENTS) ----
+    const db = window._lpbcDb;
+    const { collection, getDocs, setDoc, doc } = window._lpbcFirestoreHelpers || {};
 
-    // ---- DATA ----
+    function firestoreAvailable() {
+      return !!db && !!collection && !!getDocs && !!setDoc && !!doc;
+    }
+
+    async function loadEventsFromFirestore() {
+      if (!firestoreAvailable()) return [];
+      const snapshot = await getDocs(collection(db, "events"));
+      const loaded = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        loaded.push({
+          ...data,
+          id: data.id || docSnap.id
+        });
+      });
+      return loaded;
+    }
+
+    async function saveEventToFirestore(ev) {
+      if (!firestoreAvailable()) return;
+      const ref = doc(collection(db, "events"), String(ev.id));
+      await setDoc(ref, ev);
+    }
+
+       // ---- DATA ----
     let nextUserId = 1;
     let nextEventId = 1;
     let nextTxId = 1;
@@ -1340,45 +1367,143 @@ function buildSwishDeepLink(amountNumber, message) {
       }
     ];
 
-    // Exempelpass
-    const events = [
+    const events = []; // fylls på i initEvents()
+
+    // Övriga transaktioner (demo)
+    const transactions = [
       {
-        id: nextEventId++,
-        title: "Träning Barn Ordinarie 2h",
-        date: "2026-01-10",
-        time: "18:00",
-        duration: "2h",
-        courts: 1,
-        type: "ordinarie",
-        place: "Plan 1",
-        group: "barn1",
-        description: "Uppvärmning, passningsövningar, smålagsspel.",
-        priceMember: 30,
-        priceNonMember: 30,
-        cost: costTable.courtHourlyCost * 2 * 1,
-        attendance: {},
-        guests: [],
-        feed: [] // game-feed per aktivitet
+        id: nextTxId++,
+        date: "2026-01-01",
+        type: "income",
+        category: "Bidrag",
+        description: "Kommunbidrag",
+        amount: 5000
       },
       {
-        id: nextEventId++,
-        title: "Motionspass Vuxna Extra 1,5h",
-        date: "2026-01-12",
-        time: "19:00",
-        duration: "1_5h",
-        courts: 1,
-        type: "extra",
-        place: "Hall A",
-        group: "motion",
-        description: "Gemensam uppvärmning, löpning, styrka.",
-        priceMember: 30,
-        priceNonMember: 60,
-        cost: costTable.courtHourlyCost * 1.5 * 1,
-        attendance: {},
-        guests: [],
-        feed: [] // game-feed per aktivitet
+        id: nextTxId++,
+        date: "2026-01-05",
+        type: "expense",
+        category: "Hallhyra",
+        description: "Hyra januari",
+        amount: 2000
       }
     ];
+
+    // Ladda / initiera events från Firestore
+    async function initEvents() {
+      try {
+        const loaded = await loadEventsFromFirestore();
+        if (loaded && loaded.length > 0) {
+          // Det finns redan events i Firestore
+          loaded.forEach(ev => {
+            events.push(ev);
+            const numericId = Number(ev.id);
+            if (!Number.isNaN(numericId) && numericId >= nextEventId) {
+              nextEventId = numericId + 1;
+            }
+          });
+        } else {
+          // Inga events än – skapa dina två demo-pass och spara dem
+          const demoEvents = [
+            {
+              id: nextEventId++,
+              title: "Träning Barn Ordinarie 2h",
+              date: "2026-01-10",
+              time: "18:00",
+              duration: "2h",
+              courts: 1,
+              type: "ordinarie",
+              place: "Plan 1",
+              group: "barn1",
+              description: "Uppvärmning, passningsövningar, smålagsspel.",
+              priceMember: 30,
+              priceNonMember: 30,
+              cost: costTable.courtHourlyCost * 2 * 1,
+              attendance: {},
+              guests: [],
+              feed: []
+            },
+            {
+              id: nextEventId++,
+              title: "Motionspass Vuxna Extra 1,5h",
+              date: "2026-01-12",
+              time: "19:00",
+              duration: "1_5h",
+              courts: 1,
+              type: "extra",
+              place: "Hall A",
+              group: "motion",
+              description: "Gemensam uppvärmning, löpning, styrka.",
+              priceMember: 30,
+              priceNonMember: 60,
+              cost: costTable.courtHourlyCost * 1.5 * 1,
+              attendance: {},
+              guests: [],
+              feed: []
+            }
+          ];
+
+          for (const ev of demoEvents) {
+            events.push(ev);
+            await saveEventToFirestore(ev);
+          }
+        }
+
+        // när events är laddade: rita om UI
+        renderEvents();
+        renderEconomy();
+        updatePlayerStats();
+      } catch (err) {
+        console.error("Kunde inte ladda events från Firestore:", err);
+
+        // Fallback: om något går fel, lägg in demo-pass lokalt
+        if (events.length === 0) {
+          const demoEvents = [
+            {
+              id: nextEventId++,
+              title: "Träning Barn Ordinarie 2h",
+              date: "2026-01-10",
+              time: "18:00",
+              duration: "2h",
+              courts: 1,
+              type: "ordinarie",
+              place: "Plan 1",
+              group: "barn1",
+              description: "Uppvärmning, passningsövningar, smålagsspel.",
+              priceMember: 30,
+              priceNonMember: 30,
+              cost: costTable.courtHourlyCost * 2 * 1,
+              attendance: {},
+              guests: [],
+              feed: []
+            },
+            {
+              id: nextEventId++,
+              title: "Motionspass Vuxna Extra 1,5h",
+              date: "2026-01-12",
+              time: "19:00",
+              duration: "1_5h",
+              courts: 1,
+              type: "extra",
+              place: "Hall A",
+              group: "motion",
+              description: "Gemensam uppvärmning, löpning, styrka.",
+              priceMember: 30,
+              priceNonMember: 60,
+              cost: costTable.courtHourlyCost * 1.5 * 1,
+              attendance: {},
+              guests: [],
+              feed: []
+            }
+          ];
+          demoEvents.forEach(ev => events.push(ev));
+          renderEvents();
+          renderEconomy();
+          updatePlayerStats();
+        }
+      }
+    }
+
 
     // Övriga transaktioner (demo)
     const transactions = [
@@ -2780,7 +2905,7 @@ function createEventRow(ev) {
     });
 
     // ---- NY AKTIVITET ----
-    eventForm.addEventListener("submit", (e) => {
+        eventForm.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!userCanManageEvents()) {
         eventError.textContent = "Du har inte rätt roll för att skapa aktiviteter.";
@@ -2831,7 +2956,7 @@ function createEventRow(ev) {
 
       eventError.style.display = "none";
 
-      events.push({
+      const newEvent = {
         id: nextEventId++,
         title,
         date,
@@ -2847,7 +2972,14 @@ function createEventRow(ev) {
         cost,
         attendance: {},
         guests: [],
-        feed: [] // game-feed även på nya pass
+        feed: []
+      };
+
+      events.push(newEvent);
+
+      // Spara i Firestore (om tillgängligt)
+      saveEventToFirestore(newEvent).catch(err => {
+        console.error("Kunde inte spara event till Firestore:", err);
       });
 
       dateInput.value = "";
@@ -2865,6 +2997,7 @@ function createEventRow(ev) {
       updatePlayerStats();
       renderEconomy();
     });
+
 
     activePlayerSelect.addEventListener("change", (e) => {
       const value = Number(e.target.value);
@@ -3347,7 +3480,7 @@ function createEventRow(ev) {
       memberCategorySelect.value = "";
     }
 
-    // START
+        // START
     renderLoginUsers();
     initGroupFilter();
     initEventGroupSelect();
@@ -3357,6 +3490,10 @@ function createEventRow(ev) {
     initMembershipSelects();
     fillSwishSettingsForm();
     showLoginView();
+
+    // Ladda events från Firestore (eller skapa demo-pass första gången)
+    initEvents();
+
   </script>
 </body>
 </html>
