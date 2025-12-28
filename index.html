@@ -1129,6 +1129,27 @@
       <p class="hint">En enkel föreningschat kan vi bygga här senare.</p>
     </section>
   </main>
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBI0gcWWudr74oM3iqn1O-jkfLZkrkwGpg",
+  authDomain: "lpbc-sportapp.firebaseapp.com",
+  projectId: "lpbc-sportapp",
+  storageBucket: "lpbc-sportapp.firebasestorage.app",
+  messagingSenderId: "478261148666",
+  appId: "1:478261148666:web:8760276de626da0c2d0243",
+  measurementId: "G-2CYMC9NGJY"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
   <script>
     // ---- KONSTANTER: ROLLER, GRUPPER, MEDLEMSKAP ----
